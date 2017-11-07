@@ -1,0 +1,46 @@
+{
+  "name": "markdown-blog",
+  "version": "1.0.0",
+  "description": "A dynamic markdown blogging system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laurenhamel/markdown-blog.git"
+  },
+  "keywords": [
+    "markdown",
+    "javascript",
+    "vue",
+    "blog"
+  ],
+  "author": "Lauren Hamel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/laurenhamel/markdown-blog/issues"
+  },
+  "homepage": "https://github.com/laurenhamel/markdown-blog#readme",
+  "devDependencies": {
+    "autoprefixer": "^7.1.6",
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^3.1.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-copy-deps": "^1.1.0",
+    "grunt-includes": "^1.0.0",
+    "grunt-postcss": "^0.9.0",
+    "grunt-replace": "^1.0.1"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "moment": "^2.19.1",
+    "showdown": "^1.8.1",
+    "vue": "^2.5.3"
+  }
+}
