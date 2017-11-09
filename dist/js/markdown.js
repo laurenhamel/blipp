@@ -1,5 +1,7 @@
 function Markdown( content, options ) {
   
+  var self = this;
+  
   var config = {
     dates: {
       long: 'MMMM D, YYYY',
@@ -60,7 +62,7 @@ function Markdown( content, options ) {
       
       var template = '<span class="{prefix}-{icon}"></span>';
       
-      this.config.icons.forEach(function(prefix){
+      self.config.icons.forEach(function(prefix){
         
         var regex = new RegExp('\\$(' + prefix + ')-([a-z-]+)', 'gi'), 
             matches = [],
@@ -94,9 +96,9 @@ function Markdown( content, options ) {
           width = 560,
           height = 315;
       
-      for(var source in this.config.videos) {
+      for(var source in self.config.videos) {
         
-        var src = this.config.videos[source],
+        var src = self.config.videos[source],
             regex = new RegExp('!\\[(.*)\\]\\(' + source + ':(.+?)(?: (\d+)x(\d+))?\\)', 'gi'), 
             matches = [],
             match;
@@ -126,11 +128,99 @@ function Markdown( content, options ) {
     
     for(var extension in extensions) {
       
-      data = extensions[extension].call(this, data);
+      data = extensions[extension](data);
       
     }
       
     return data;
+    
+  };
+  var transformations = {
+    array: function(str){
+      
+      if(typeof str !== 'string') return str;
+      
+      // Convert arrays.
+      if( str.indexOf('[') === 0 && str.indexOf(']') == str.length - 1 ) {
+
+        str = str.replace(/\[|\]/g, '').split(',').map(function(value){
+          return value.trim();
+        });
+        
+        for( var i = 0; i < str.length; i++ ) {
+          
+          str[i] = transformer(str[i]);
+          
+        }
+
+      }
+      
+      return str;
+      
+    },
+    object: function(str){
+      
+      if(typeof str !== 'string') return str;
+      
+      // Convert objects.
+      if( str.indexOf('{') === 0 && str.indexOf('}') == str.length - 1 ) {
+
+        str = str
+          .replace(/{|}/g, '')
+          .split(',')
+          .map(function(pair){
+            return pair.split(':').map(function(string){
+              return string.trim();
+            });
+          }).reduce(function(accumulator, current){
+            accumulator[current[0]] = current[1];
+            return accumulator;
+          }, {});
+  
+          for(var key in str) {
+         
+            str[key] = transformer(str[key]);
+
+          } 
+
+      }
+      
+      return str;
+      
+    },
+    date: function(str){
+      
+      if(typeof str !== 'string') return str;
+      
+      var date = moment(str, self.config.dates.formats);
+      
+      return date.isValid() ? date : str;
+      
+    },
+    number: function(str){ 
+      
+      if(typeof str !== 'string') return str;
+      
+      // Convert numbers.
+      if( !isNaN(+str) && isFinite(+str) ) {
+          
+          str = +str;
+          
+      }
+      
+      return str;
+      
+    }
+  };
+  var transformer = function(str){
+    
+    for(var type in transformations) {
+    
+      str = transformations[type](str);
+    
+    }
+  
+    return str;
     
   };
 
@@ -165,20 +255,22 @@ function Markdown( content, options ) {
       .replace(/---/g, '')
       .trim()
       .split(/\n/)
+      .filter(function(meta){
+        return meta !== undefined && meta !== null & meta !== '';
+      })
       .map(function(pair){
     
-        var arr = pair.trim().split(':').map(function(string){
+        // Convert the key-value pair to an array.
+        var arr = pair.trim().split(/(.+?):(.+)/).filter(function(string){
+          return string !== "";
+        }).map(function(string){
           return string.trim();
         });
-      
-        if(arr[0].toLowerCase().indexOf('date') > -1) {
+    
+        // Transform the value.
+        arr[1] = transformer(arr[1]);
 
-          arr[1] = arr[1] ? moment(arr[1], this.config.dates.formats) : moment();
-          
-        }
-      
-        if( $.isNumeric(arr[1]) ) arr[1] = +arr[1];
-      
+        // Output the array as an object.
         var obj = {};
       
         obj[arr[0]] = arr[1];
@@ -187,8 +279,8 @@ function Markdown( content, options ) {
     
       }, this)
       .reduce(function(accumulator, current){
-      return Object.assign(accumulator, current);
-    }, {}),
+        return Object.assign(accumulator, current);
+      }, {}),
     this.methods,
     {
       _config: this.config
@@ -197,6 +289,6 @@ function Markdown( content, options ) {
   this.markdown = this.file
     .replace(this.file.match(frontmatter)[0], '')
     .trim();
-  this.html = converter.makeHtml(parser.call(this, Mustache.render(this.markdown, this.meta)));
+  this.html = converter.makeHtml(parser(Mustache.render(this.markdown, this.meta)));
   
 }
