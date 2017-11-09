@@ -23,7 +23,13 @@ module.exports = function(grunt){
         tasks: ['includes', 'replace:dev']
       },
       config: {
-        files: ['Gruntfile.js', 'package.json', 'composer.json'],
+        files: [
+          'Gruntfile.js', 
+          'package.json', 
+          'composer.json', 
+          'package-config.json',
+          '.jshintrc'
+        ],
         tasks: ['jshint:config', 'startup'],
         options: { reload: true }
       },
@@ -66,6 +72,9 @@ module.exports = function(grunt){
       ]
     },
     jshint: {
+      options: {
+        jshintrc: '.jshintrc'
+      },
       config: ['Gruntfile.js'],
       js: ['src/js/**/*.js']
     },

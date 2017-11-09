@@ -1,48 +1,42 @@
-function FrontMatter( content ) {
+function Markdown( content ) {
   
-  var regex = /---((?:\S|\s)*)---/g;
+  var frontmatter = /(---(?:\S|\s)*---)/g;
+  var converter = new showdown.Converter({
+    customizedHeaderId: true,
+    strikethrough: true,
+    tables: true,
+    disabledForced4SpacesIndentedSublists: true
+  });
 
-  
-  this.raw = content;
-  this.matter = this.raw.match(regex)[0].replace(/---/g, '').trim();
-  this.markdown = this.raw.replace(this.matter, '').trim();
-  this.data = this.matter.split(/\n/).map(function(pair){ 
+  this.file = content;
+  this.meta = this.file
+    .match(frontmatter)[0]
+    .replace(/---/g, '')
+    .trim()
+    .split(/\n/)
+    .map(function(pair){ 
     
-    var arr = pair.trim().split(':').map(function(string){
-      
-      return string.trim();
-      
-    });
+      var arr = pair.trim().split(':').map(function(string){
+        return string.trim();
+      });
     
-    if(arr[0].toLowerCase().indexOf('date') > -1) {
-      
-      arr[1] = arr[1] ? moment(arr[1]) : moment();
-      
-    }
+      if(arr[0].toLowerCase().indexOf('date') > -1) arr[1] = arr[1] ? moment(arr[1]) : moment();
     
-    var obj = {};
+      if( $.isNumeric(arr[1]) ) arr[1] = +arr[1];
     
-    obj[arr[0]] = arr[1];
+      var obj = {};
     
-    return obj;
+      obj[arr[0]] = arr[1];
     
-  }).reduce(function(accumulator, current){
+      return obj;
     
-    return Object.assign(accumulator, current);
-    
-  }, {});
+    })
+    .reduce(function(accumulator, current){
+      return Object.assign(accumulator, current);
+    }, {});
+  this.markdown = this.file
+    .replace(this.file.match(frontmatter)[0], '')
+    .trim();
+  this.html = converter.makeHtml(this.markdown);
   
 }
-
-// TODO: Get and read the contents of the the markdown file.
-
-// TODO: Extract the front matter from the markdown file.
-
-
-$.get('../posts/test.md').then(function(contents){
-  
-  var frontMatter = new FrontMatter(contents);
-  
-  console.log( frontMatter.data );
-  
-});

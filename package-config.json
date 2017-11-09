@@ -3,6 +3,7 @@
     "style.css"
   ],
   "scripts": [
+    "markdown.js",
     "index.js"
   ]
 }
