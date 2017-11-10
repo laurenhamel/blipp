@@ -4,6 +4,4 @@ $.get('../posts/test.md').then(function(contents){
   
   $('article').append(data.html);
   
-  console.log(data);
-  
 });

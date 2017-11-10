@@ -1,23 +1,43 @@
-<html>
-<head>
-  
-  <title>Markdown Blog</title>
-  
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/dependencies/jquery.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/dependencies/jquery.min.js"></script>
   <script src="js/dependencies/moment.min.js"></script>
   <script src="js/dependencies/mustache.min.js"></script>
   <script src="js/dependencies/showdown.min.js"></script>
   <script src="js/dependencies/vue.min.js"></script>
-  <script src="js/markdown.js"></script>
-  <script src="js/index.js"></script>
+  <script src="js/dependencies/vue-router.min.js"></script>
   
-</head>
-<body>
+<main id="blog">
   
-  <article></article>
+  <router-view></router-view>
   
-  <script src="//localhost:35729/livereload.js"></script>
+</main>
+
+<template id="feed">
+  <div class="feed">
+      
+    <snippet v-for="post in newest(posts, sort)" :post="post" :key="post"></snippet>
+    
+  </div>
+</template>
+
+<template id="snippet">
+  <div class="snippet">
+    
+    <img v-if="post.meta.feature" :src="post.meta.feature" width="100%">
+    
+    <h1>{{post.meta.title}}</h1>
+    
+    <p>{{post.meta.description}}</p>
+
+    <router-link :to="'post/' + post.id">View Full Post</router-link>
+    
+  </div>
+</template>
+
+<template id="post">
+  <article class="post" v-html="post.html"></article>
+</template>
   
-</body>
-</html>
+<script src="js/markdown.js"></script>
+  <script src="js/blog.js"></script>
+<script src="//localhost:35729/livereload.js"></script>

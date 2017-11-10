@@ -1,5 +1,5 @@
-function Markdown( content, options ) {
-  
+function Markdown( filename, content, options ) {
+
   var self = this;
   
   var config = {
@@ -224,6 +224,7 @@ function Markdown( content, options ) {
     
   };
 
+  this.filename = filename;
   this.file = content;
   this.methods = {
     dates: {
@@ -290,5 +291,6 @@ function Markdown( content, options ) {
     .replace(this.file.match(frontmatter)[0], '')
     .trim();
   this.html = converter.makeHtml(parser(Mustache.render(this.markdown, this.meta)));
+  this.id = this.meta.title.replace(/ /g, '-').toLowerCase();
   
 }

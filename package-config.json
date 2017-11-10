@@ -4,6 +4,6 @@
   ],
   "scripts": [
     "markdown.js",
-    "index.js"
+    "blog.js"
   ]
 }

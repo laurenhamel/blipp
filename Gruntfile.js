@@ -18,6 +18,10 @@ module.exports = function(grunt){
         files: ['src/js/**/*.js'],
         tasks: ['jshint:js', 'copy:js']
       },
+      php: {
+        files: ['src/php/**/*.php', 'router.json'],
+        tasks: ['copy:php']
+      },
       html: {
         files: ['src/**/*.html'],
         tasks: ['includes', 'replace:dev']
@@ -144,7 +148,7 @@ module.exports = function(grunt){
           ],
         },
         files: [
-          {expand: true, cwd: 'src/', src: ['*.html'], dest: 'dist/'}
+          {expand: true, cwd: 'dist/', src: ['*.html'], dest: 'dist/'}
         ]
       },
       dist: {
@@ -207,7 +211,7 @@ module.exports = function(grunt){
           ],
         },
         files: [
-          {expand: true, cwd: 'src/', src: ['*.html'], dest: 'dist/'}
+          {expand: true, cwd: 'dist/', src: ['*.html'], dest: 'dist/'}
         ]
       }
     },
@@ -219,16 +223,23 @@ module.exports = function(grunt){
     },
     includes: {
       html: {
-        options: { includePath: 'src/includes/' },
-        files: [
-          {expand: true, cwd: 'src/', src: ['*.html'], dest: 'dist/' }
-        ]
+        options: { 
+          includePath: 'src/includes/',
+        },
+        cwd: 'src/',
+        src: ['*.html'], 
+        dest: 'dist/'
       }
     },
     copy: {
       js: {
         files: [
           { expand: true, cwd: 'src/js', src: ['*.js'], dest: 'dist/js' }
+        ]
+      },
+      php: {
+        files: [
+          { expand: true, cwd: 'src/php', src: ['*.php'], dest: 'dist/php' }
         ]
       },
       assets: {
@@ -259,6 +270,7 @@ module.exports = function(grunt){
     'sass:dev',
     'jshint',
     'copy:js',
+    'copy:php',
     'copy:assets',
     'includes',
     'replace:dev'
@@ -272,6 +284,8 @@ module.exports = function(grunt){
     'cssmin',
     'uglify',
     'copy:assets',
+    'copy:js',
+    'copy:php',
     'includes',
     'replace:dist'
   ]);

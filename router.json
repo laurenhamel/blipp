@@ -1,0 +1,6 @@
+{
+  "root": "/markdown-blog/",
+  "site": "dist/",
+  "posts": "posts/",
+  "drafts": "drafts/"
+}
