@@ -97,7 +97,7 @@ var Feed = Vue.component('feed', {
     var self = this,
         api = new API();
     
-    // Get files.
+    // Get posts.
     api.getPosts().then(function(response){
       
       self.posts = response.data;
@@ -134,9 +134,6 @@ var Post = Vue.component('post', {
   
   data: function(){
     return {
-      files: [],
-      posts: [],
-      router: {},
       post: {}
     };
   },
@@ -145,17 +142,29 @@ var Post = Vue.component('post', {
   
   created: function(){
     
-    var self = this; 
+    var self = this,
+        api = new API();
+    
+    // Get posts by ID.
+    api.getPostById( this.id ).then(function(response){
       
-    // Get post by ID.
+      self.post = response.data;
+      
+    });
     
   },
   
   beforeRouteUpdate: function(to, from, next){
     
-    var self = this;
-                      
-    // Get post by ID.
+    var self = this,
+        api = new API();
+    
+    // Get posts by ID.
+    api.getPostById( to.id ).then(function(response){
+      
+      self.post = response.data;
+      
+    });
     
   }
   
