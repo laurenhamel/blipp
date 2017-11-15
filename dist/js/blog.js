@@ -1,72 +1,52 @@
-// Globals
-var filters = {};
-var methods = {
+// Constants
+var API_PATH = '/markdown-blog/api/';
 
-  getFiles: function( callback ){
-
-    var data = {};
-    
-    $.when(
-      
-      // Get post data.
-      $.get('php/feed.php').then(function(data){
-        return JSON.parse(data);
-      }),
-      
-      // Get router data.
-      $.get('../router.json').then(function(data){
-        return data;
-      })
-   
-    ).then(function(files, router){
-      
-      data.files = files;
-      data.router = router;
-      
-      // Fire the callback.
-      if( $.isFunction(callback) ) callback(data);
-      
-    });
-
-    return data;
-
-  },
+// Constructors
+var API = function() {
   
-  getPosts: function( files, router, callback ){
-    
-    var deferreds = [], posts = [];
-    
-    for( var i = 0; i < files.length; i++ ){
-
-      var file = files[i];
-
-      deferreds.push(
-        $.get(router.root + router.posts + file).then(function(data){
-          posts.push( new Markdown(file, data) );
-        })
-      );
-
-    }
-    
-    $.when.apply($, deferreds).then(function(){
-      
-      if($.isFunction(callback)) callback(posts);
-      
-    });
-    
-    return posts;
-
-  },
+  this.src = API_PATH;
   
-  getPostByID: function( id, feed ){
+  // Posts
+  this.getPosts = function(){
     
-    return feed.filter(function(post){ 
-      return post.id == id;
-    })[0];
+    return $.getJSON( this.src + '/posts/' );
     
-  },
+  };
+  this.getPostsByTag = function( tag ){
+    
+    return $.getJSON( this.src + '/posts/tag/' + tag + '/' );
+    
+  };
+  this.getPostsByCategory = function( category ){
+    
+    return $.getJSON( this.src + '/posts/category/' + category + '/' );
+    
+  };
+  this.getPostById = function( id ){
+    
+    return $.getJSON( this.src + '/posts/id/' + id + '/' );
+    
+  };
+  
+  // Tags
+  this.getTags = function(){
+    
+    return $.getJSON( this.src + '/tags/' );
+    
+  };
+  
+  // Categories
+  this.getCategories = function(){
+    
+    return $.getJSON( this.src + '/categories/' );
+    
+  };
   
 };
+
+// Globals
+var filters = {};
+var methods = {};
 
 // Feed
 var Feed = Vue.component('feed', {
@@ -77,9 +57,7 @@ var Feed = Vue.component('feed', {
   
   data: function(){
     return {
-      files: [],
       posts: [],
-      router: {},
       more: true
     };
   },
@@ -116,14 +94,14 @@ var Feed = Vue.component('feed', {
   
   created: function(){
     
-    var self = this;
+    var self = this,
+        api = new API();
     
-    self.getFiles(function(data){
+    // Get files.
+    api.getPosts().then(function(response){
       
-      self.files = data.files;
-      self.router = data.router;
-      self.posts = self.getPosts( self.files, self.router );
-
+      self.posts = response.data;
+      
     });
     
   }
@@ -169,18 +147,7 @@ var Post = Vue.component('post', {
     
     var self = this; 
       
-    self.getFiles(function(data){ 
-
-      self.files = data.files;
-      self.router = data.router;
-      self.posts = self.getPosts( self.files, self.router );
-      self.posts = self.getPosts( self.files, self.router, function(data){
-        
-        self.post = self.getPostByID( self.id, data );
-        
-      });
-
-    });
+    // Get post by ID.
     
   },
   
@@ -188,17 +155,7 @@ var Post = Vue.component('post', {
     
     var self = this;
                       
-    self.getFiles(function(data){ 
-
-      self.files = data.files;
-      self.router = data.router;
-      self.posts = self.getPosts( self.files, self.router, function(data){
-        
-        self.post = self.getPostByID( to.id, data );
-        
-      });
-
-    });
+    // Get post by ID.
     
   }
   
