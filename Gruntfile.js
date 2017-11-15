@@ -239,7 +239,7 @@ module.exports = function(grunt){
       },
       php: {
         files: [
-          { expand: true, cwd: 'src/php', src: ['*.php'], dest: 'dist/php' }
+          { expand: true, cwd: 'src/php', src: ['**/*.php'], dest: 'dist/php' }
         ]
       },
       assets: {

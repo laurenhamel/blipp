@@ -7,13 +7,14 @@ date-created: 11/06/2017 12:00PM
 date-modified: 11/07/2017 1:00AM
 category: Web Development
 tags: [blog, web design, web development, markdown]
+data: {foo: 'bar', foo2: [foo, bar]}
 ---
 
 ![]({{feature}})
 
 # {{title}}
 
-{{dates.long.created}}
+{{date.long.created}}
 
 {{author}}
 

@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{HTTP_HOST} localhost [NC]
+RewriteCond %{REQUEST_URI} ^/markdown-blog/api(\.php)?/(.*)$ [NC]
+RewriteRule api/(.*) markdown-blog/dist/php/api/$1 [QSA,L]

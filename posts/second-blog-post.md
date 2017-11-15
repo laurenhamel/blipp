@@ -13,7 +13,7 @@ tags: [blog, web design, web development, markdown]
 
 # {{title}}
 
-{{dates.long.created}}
+{{date.long.created}}
 
 {{author}}
 
