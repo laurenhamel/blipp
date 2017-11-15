@@ -113,7 +113,7 @@ var Snippet = Vue.component('snippet', {
   
   template: '#snippet',
   
-  props: ['post'],
+  props: ['post', 'link'],
   
   data: function(){
     return {};
@@ -138,6 +138,8 @@ var Post = Vue.component('post', {
     };
   },
   
+  filters: $.extend({}, filters),
+  
   methods: $.extend({}, methods),
   
   created: function(){
@@ -145,8 +147,8 @@ var Post = Vue.component('post', {
     var self = this,
         api = new API();
     
-    // Get posts by ID.
-    api.getPostById( this.id ).then(function(response){
+    // Get post by ID.
+    api.getPostById( this.$route.params.id ).then(function(response){
       
       self.post = response.data;
       
@@ -159,10 +161,87 @@ var Post = Vue.component('post', {
     var self = this,
         api = new API();
     
-    // Get posts by ID.
-    api.getPostById( to.id ).then(function(response){
+    // Get post by ID.
+    api.getPostById( to.$route.params.id ).then(function(response){
       
       self.post = response.data;
+      
+      next();
+      
+    });
+    
+  }
+  
+});
+
+// Category
+var Category = Vue.component('category', {
+  
+  template: '#category',
+  
+  props: ['category', 'count', 'sort'],
+  
+  data: function(){
+    return {
+      posts: []
+    };
+  },
+  
+  methods: $.extend({
+    
+    newest: function( posts, date ) {
+      
+      return posts.slice(0).sort(function(a, b){
+  
+        if(a.meta[date] < b.meta[date]) return 1;
+        if(a.meta[date] > b.meta[date]) return -1;
+        return 0;
+        
+      });
+      
+    },
+    
+    oldest: function( posts, date ) {
+      
+      return posts.slice(0).sort(function(a, b){
+  
+        if(a.meta[date] < b.meta[date]) return -1;
+        if(a.meta[date] > b.meta[date]) return 1;
+        return 0;
+        
+      });
+      
+    }
+    
+  }, methods),
+  
+  filters: $.extend({}, filters),
+  
+  created: function(){
+    
+    var self = this,
+        api = new API();
+    
+    // Get posts by category.
+    api.getPostsByCategory( this.$route.params.category ).then(function(response){
+      
+      self.posts = response.data; console.log(response);
+      
+    });
+    
+  },
+  
+  beforeRouteUpdate: function(to, from, next){
+    
+    var self = this,
+        api = new API();
+    
+    // Get posts by Category.
+    api.getPostsByCategory( to.$route.params.category ).then(function(response){
+      
+      self.posts = response.data;
+      
+      next();
       
     });
     
@@ -184,8 +263,15 @@ var Router = new VueRouter({
     },
     { 
       path: '/post/:id', 
-      component: Post, 
-      props: true 
+      component: Post
+    },
+    { 
+      path: '/category/:category', 
+      component: Category, 
+      props: { 
+        count: 10, 
+        sort: 'date-created'
+      }
     }
   ]
   

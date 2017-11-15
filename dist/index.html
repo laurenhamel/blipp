@@ -15,7 +15,10 @@
 <template id="feed">
   <div class="feed">
       
-    <snippet v-for="post in newest(posts, sort)" :post="post" :key="post"></snippet>
+    <snippet v-for="post in newest(posts, sort)" 
+             :post="post" 
+             :key="post"
+             link="post/"></snippet>
     
   </div>
 </template>
@@ -29,13 +32,24 @@
     
     <p>{{post.meta.description}}</p>
 
-    <router-link :to="'post/' + post.id">View Full Post</router-link>
+    <router-link :to="link + post.id">View Full Post</router-link>
     
   </div>
 </template>
 
 <template id="post">
   <article class="post" v-html="post.html"></article>
+</template>
+
+<template id="category">
+  <div class="category">
+      
+    <snippet v-for="post in newest(posts, sort)" 
+             :post="post" 
+             :key="post"
+             link="../post/"></snippet>
+    
+  </div>
 </template>
   
 <script src="js/markdown.js"></script>
