@@ -266,7 +266,7 @@ var Router = new VueRouter({
       path: '/', 
       component: Feed, 
       props: { 
-        limit: 1, 
+        limit: 10, 
         sort: 'date-created',
         order: 'newest'
       } 

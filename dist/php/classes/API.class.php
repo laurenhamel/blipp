@@ -192,10 +192,10 @@ class API implements GET, POST, PUT, DELETE {
   
   // Data Modifiers
   
-  // Enable a modifier by adding it below.
+  // Enable a modifier by adding it below. Order matters.
   private $modifiers = [
-    'paginate',
-    'sort'
+    'sort',
+    'paginate'
   ];
   
   // Handle data modifiers.
@@ -268,7 +268,7 @@ class API implements GET, POST, PUT, DELETE {
     $sort = $this->_sort( $data['data'] );
     
     // Merge data.
-    $result['data'] = $sort['data'];
+    $result['data'] = $sort['data']; 
     
     // Return result.
     return $result;
