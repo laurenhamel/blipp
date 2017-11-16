@@ -16,7 +16,13 @@ interface GET {
   
 }
 
-class API implements GET {
+interface POST {}
+
+interface PUT {}
+
+interface DELETE {}
+
+class API implements GET, POST, PUT, DELETE {
   
   private $status = [
     200 => 'OK',
@@ -32,6 +38,7 @@ class API implements GET {
   protected $method = 'GET';
   protected $request = [];
   protected $input = [];
+  protected $params = [];
   
   // Getters
   public function getMethod() {
@@ -43,28 +50,54 @@ class API implements GET {
   public function getInput() {
     return $this->input;
   }
+  public function getParams() {
+    return $this->params;
+  }
   
   // Setters
   public function setMethod( $method ) {
     $this->method = $method;
   }
-  public function setRequest( $request ) {
+  public function setRequest( array $request ) {
     $this->request = $request;
   }
   public function setInput( $input ) {
     $this->input = $input;
   }
+  public function setParams( array $params ) {
+    $this->params = $params;
+  }
   
   // Build response data.
-  private function response( $status, $data = [] ) {
+  private function response( $status, array $data = [] ) {
     
+    // Initialize response.
     $response['status'] = [
       'code'      => $status,
       'message'   => $this->status[$status]
     ];
     
-    if( $status == 200 ) $response['data'] = $data;
+    // Pass through data modifiers.
+    $result = $this->modify($data);
     
+    // Extract data.
+    $data = $result['data'];
+    
+    // Keep any other data.
+    unset($result['data']);
+    
+    // Add data.
+    if( $status == 200 ) {
+      
+      // Save data.
+      $response['data'] = $data;
+      
+      // Merge additional data.
+      $response = array_merge($result, $response);
+      
+    }
+    
+    // Encode and return response.
     return json_encode($response);
     
   }
@@ -157,6 +190,181 @@ class API implements GET {
     
   }
   
+  // Data Modifiers
+  
+  // Enable a modifier by adding it below.
+  private $modifiers = [
+    'paginate',
+    'sort'
+  ];
+  
+  // Handle data modifiers.
+  private function modify( array $data ) {
+    
+    // Initialize result.
+    $result['data'] = $data;
+    
+    // Modify data.
+    foreach($this->modifiers as $index => $modifier) {
+
+      if( method_exists($this, $modifier) ) {
+        
+        $result = array_merge($result, $this->$modifier($result));
+                              
+      }
+      
+    }
+    
+    // Return result.
+    return $result;
+    
+  }
+  
+  // Define data modifiers.
+  private function paginate( array $data ) {
+    
+    // Initialize result.
+    $result = [];
+    
+    // Apply offset.
+    $offset = $this->_offset( $data['data'] );
+    
+    // Apply limit.
+    $limit = $this->_limit( $offset['data'] );
+    
+    // Set next.
+    if( $limit['limit'] and $limit['offset'] ) {
+        
+      $result['next'] = [
+        'offset'  => $limit['offset'],
+        'limit'   => $limit['remaining'] >= $limit['limit'] ? $limit['limit'] : $limit['remaining']
+      ];
+      
+    }
+
+    // Set previous.
+    if( $offset['offset'] ) {
+      
+      $result['prev'] = [
+        'offset'  => $offset['start'] - $limit['limit'],
+        'limit'   => $limit['limit']
+      ];
+      
+    }
+    
+    // Merge results.
+    $result['data'] = $limit['data'];
+    
+    // Return result.
+    return $result;
+    
+  }
+  private function sort( array $data ) {
+    
+    // Initialize result.
+    $result = [];
+    
+    // Apply sort.
+    $sort = $this->_sort( $data['data'] );
+    
+    // Merge data.
+    $result['data'] = $sort['data'];
+    
+    // Return result.
+    return $result;
+    
+  }
+  
+  // Define data modification tasks.
+  private function _offset( array $data ) {
+    
+    // Get parameters.
+    $params = $this->params;
+    
+    // Build result.
+    $result = [
+      'offset'  => ($offset = isset($params['offset']) ? +$params['offset'] : false),
+      'length'  => ($length = count($data)),
+      'data'    => ($subset = $offset !== false ? array_slice($data, $offset) : $data)
+    ];
+    
+    // Capture start and end position in original data set.
+    $result['start'] = array_search($subset[0], $data);
+    $result['end'] = array_search($subset[count($subset)-1], $data);
+    
+    // Offset.
+    return $result;
+    
+    
+  }
+  private function _limit( array $data ) {
+    
+    // Get parameters.
+    $params = $this->params;
+    
+    // Build result.
+    $result = [
+      'limit'   => ($limit = isset($params['limit']) ? +$params['limit'] : false),
+      'length'  => ($length = count($data)),
+      'data'    => ($subset = $limit !== false ? array_slice($data, 0, $limit) : $data)
+    ];
+
+    // Capture the offset amount.
+    if( $length > ($offset = array_search($subset[count($subset)-1], $data) + 1) ) {
+      
+      $result['offset'] = $offset;
+      $result['remaining'] = $length - $offset;
+      
+    }
+    
+    // Limit.
+    return $result;
+    
+  }
+  private function _sort( array $data ) {
+    
+    // Get parameters.
+    $params = $this->params;
+    
+    // Build result.
+    $result = [
+      'sort'    => ($sort = $params['sort']?: 'date-created'),
+      'order'   => ($order = $params['order'] ?: 'newest'),
+      'data'    => []
+    ];
+    
+    // Make the data sortable.
+    $sortable = [];
+    
+    foreach($data as $index => $post) {
+      
+      // Get the metadata.
+      $meta = $post->meta[$sort];
+ 
+      // Convert Moment objects to times.
+      if( $meta instanceof Moment ) $meta = strtotime( $meta->format() );
+      
+      // Add it to the sortable array.
+      $sortable[$index] = $post->meta[$sort];
+      
+    }
+    
+    // Sort the data.
+    switch( $order ) {
+      case 'newest': arsort($sortable); break;
+      case 'oldest': asort($sortable); break;
+    }
+    
+    // Capture sorted data.
+    foreach( $sortable as $index => $value ) {
+      $result['data'][] = $data[$index];
+    }
+    
+    // Sort.
+    return $result;
+    
+  }
+  
   // GET Methods
   
   // Posts
@@ -204,7 +412,7 @@ class API implements GET {
         else return $cat == $category;
       }
     );
-
+    
     return $this->response( 200, $data );
     
   }
@@ -232,7 +440,7 @@ class API implements GET {
         else return in_array($tag, $tags);
       }
     );
-
+    
     return $this->response( 200, $data );
     
   }

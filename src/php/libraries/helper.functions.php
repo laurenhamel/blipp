@@ -54,4 +54,18 @@ function flattendir( array $dir, $prefix = '' ) {
   
 }
 
+function array_consolidate( array $array ) {
+  
+  $result = [];
+  
+  foreach( $array as $pair ) {
+    
+    $result[$pair[0]] = $pair[1];
+    
+  }
+  
+  return $result;
+  
+}
+
 ?>

@@ -1,8 +1,12 @@
 <div class="feed">
     
-  <snippet v-for="post in newest(posts, sort)" 
+  <snippet v-for="post in posts" 
            :post="post" 
            :key="post"
            link="post/"></snippet>
+  
+  <div v-if="loading">FETCHING POSTS...</div>
+  
+  <button v-if="more && !loading" @click="loadMore( 1000 )">Load More</button>
   
 </div>

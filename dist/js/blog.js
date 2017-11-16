@@ -2,24 +2,25 @@
 var API_PATH = '/markdown-blog/api/';
 
 // Constructors
-var API = function() {
+var API = function( options ) {
   
   this.src = API_PATH;
+  this.params = $.extend({}, options);
   
   // Posts
-  this.getPosts = function(){
+  this.getPosts = function( options ){
     
-    return $.getJSON( this.src + '/posts/' );
+    return $.getJSON( this.src + '/posts/?' + $.param(this.params) );
     
   };
   this.getPostsByTag = function( tag ){
     
-    return $.getJSON( this.src + '/posts/tag/' + tag + '/' );
+    return $.getJSON( this.src + '/posts/tag/' + tag + '/?' + $.param(this.params) );
     
   };
   this.getPostsByCategory = function( category ){
     
-    return $.getJSON( this.src + '/posts/category/' + category + '/' );
+    return $.getJSON( this.src + '/posts/category/' + category + '/?' + $.param(this.params) );
     
   };
   this.getPostById = function( id ){
@@ -31,14 +32,14 @@ var API = function() {
   // Tags
   this.getTags = function(){
     
-    return $.getJSON( this.src + '/tags/' );
+    return $.getJSON( this.src + '/tags/?' + $.param(this.params) );
     
   };
   
   // Categories
   this.getCategories = function(){
     
-    return $.getJSON( this.src + '/categories/' );
+    return $.getJSON( this.src + '/categories/?' + $.param(this.params) );
     
   };
   
@@ -53,39 +54,54 @@ var Feed = Vue.component('feed', {
   
   template: '#feed',
   
-  props: ['count', 'sort'],
+  props: ['limit', 'sort', 'order'],
   
   data: function(){
     return {
       posts: [],
-      more: true
+      next: {},
+      more: false,
+      loading: false
     };
   },
   
   filters: $.extend({}, filters),
   
   methods: $.extend({
-      
-    newest: function( posts, date ) {
-      
-      return posts.slice(0).sort(function(a, b){
-  
-        if(a.meta[date] < b.meta[date]) return 1;
-        if(a.meta[date] > b.meta[date]) return -1;
-        return 0;
-        
-      });
-      
-    },
     
-    oldest: function( posts, date ) {
+    loadMore: function( delay ){
       
-      return posts.slice(0).sort(function(a, b){
-  
-        if(a.meta[date] < b.meta[date]) return -1;
-        if(a.meta[date] > b.meta[date]) return 1;
-        return 0;
-        
+      delay = delay || 0;
+      
+      var self = this,
+          api = new API({
+            sort: this.sort,
+            order: this.order,
+            limit: this.next.limit,
+            offset: this.next.offset
+          });
+      
+      self.next = {};
+      self.more = false;
+      self.loading = true;
+    
+      // Get posts.
+      api.getPosts().then(function(response){
+
+        setTimeout(function(){
+          
+          self.posts = self.posts.concat(response.data);
+          self.loading = false;
+          
+        }, delay);
+
+        if( response.next ) {
+
+          self.more = true;
+          self.next = response.next;
+
+        }
+
       });
       
     }
@@ -95,12 +111,23 @@ var Feed = Vue.component('feed', {
   created: function(){
     
     var self = this,
-        api = new API();
+        api = new API({
+          sort: this.sort,
+          order: this.order,
+          limit: this.limit
+        });
     
     // Get posts.
     api.getPosts().then(function(response){
-      
+    
       self.posts = response.data;
+      
+      if( response.next ) {
+        
+        self.more = true;
+        self.next = response.next;
+        
+      }
       
     });
     
@@ -179,7 +206,7 @@ var Category = Vue.component('category', {
   
   template: '#category',
   
-  props: ['category', 'count', 'sort'],
+  props: ['category', 'limit', 'sort', 'order'],
   
   data: function(){
     return {
@@ -187,40 +214,18 @@ var Category = Vue.component('category', {
     };
   },
   
-  methods: $.extend({
-    
-    newest: function( posts, date ) {
-      
-      return posts.slice(0).sort(function(a, b){
-  
-        if(a.meta[date] < b.meta[date]) return 1;
-        if(a.meta[date] > b.meta[date]) return -1;
-        return 0;
-        
-      });
-      
-    },
-    
-    oldest: function( posts, date ) {
-      
-      return posts.slice(0).sort(function(a, b){
-  
-        if(a.meta[date] < b.meta[date]) return -1;
-        if(a.meta[date] > b.meta[date]) return 1;
-        return 0;
-        
-      });
-      
-    }
-    
-  }, methods),
+  methods: $.extend({}, methods),
   
   filters: $.extend({}, filters),
   
   created: function(){
     
     var self = this,
-        api = new API();
+        api = new API({
+          limit: this.limit,
+          sort: this.sort,
+          order: this.order
+        });
     
     // Get posts by category.
     api.getPostsByCategory( this.$route.params.category ).then(function(response){
@@ -234,7 +239,11 @@ var Category = Vue.component('category', {
   beforeRouteUpdate: function(to, from, next){
     
     var self = this,
-        api = new API();
+        api = new API({
+          limit: this.limit,
+          sort: this.sort,
+          order: this.order
+        });
     
     // Get posts by Category.
     api.getPostsByCategory( to.$route.params.category ).then(function(response){
@@ -257,8 +266,9 @@ var Router = new VueRouter({
       path: '/', 
       component: Feed, 
       props: { 
-        count: 10, 
-        sort: 'date-created'
+        limit: 1, 
+        sort: 'date-created',
+        order: 'newest'
       } 
     },
     { 
@@ -269,8 +279,9 @@ var Router = new VueRouter({
       path: '/category/:category', 
       component: Category, 
       props: { 
-        count: 10, 
-        sort: 'date-created'
+        limit: 10, 
+        sort: 'date-created',
+        order: 'newest'
       }
     }
   ]
