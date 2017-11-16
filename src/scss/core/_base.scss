@@ -1,0 +1,26 @@
+/**
+ * Normalize
+ */
+@include normalize();
+
+/**
+ * Define base styles.
+ */
+body {
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 16px;
+  color: #333333;
+}
+
+a { text-decoration: none; }
+
+a, #{$all-buttons} {
+  cursor: pointer;
+}
+
+#{$all-inputs} {
+  -webkit-appearance: none;
+}
+
+* { position: relative; box-sizing: border-box; }

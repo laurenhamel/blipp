@@ -30,13 +30,23 @@
 <template id="snippet">
   <div class="snippet">
     
-    <img v-if="post.meta.feature" :src="post.meta.feature" width="100%">
+    <div class="feature"
+         v-if="post.meta.feature" 
+         :style="{ 'background-image': 'url(' + post.meta.feature + ')' }"></div>
     
-    <h1>{{post.meta.title}}</h1>
+    <div class="content">
     
-    <p>{{post.meta.description}}</p>
-
-    <router-link :to="link + post.id">View Full Post</router-link>
+      <h1>{{post.meta.title}}</h1>
+    
+      <p>{{post.meta.description}}</p>
+      
+      <router-link :to="link + post.id" 
+                   tag="button" 
+                   class="button">
+        Read More
+      </router-link>
+      
+    </div>
     
   </div>
 </template>

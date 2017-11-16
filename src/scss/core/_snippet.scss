@@ -1,0 +1,41 @@
+/**
+ * Snippets are used on the feed page as
+ * well as the aggregated posts by category 
+ * and posts by tag pages.
+ */
+.snippet {
+  
+  $background: lightblue;
+  
+  background-color: $background;
+  color: color-contrast($background);
+  
+  + .snippet { margin-top: 25px; }
+  
+  /**
+   * Feature Image
+   */
+  .feature {
+    width: 100%;
+    height: 300px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: grayscale(25%);
+    opacity: .5;
+  }
+  
+  /**
+   * Snippet Content
+   */
+  .content {
+    
+    $background: white;
+    
+    background-color: $background;
+    color: color-contrast($background);
+    padding: 25px;
+    
+  }
+  
+}

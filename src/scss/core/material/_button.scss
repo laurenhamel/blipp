@@ -1,0 +1,22 @@
+.button {
+  
+  $color: #333333;
+  
+  background: transparent;
+  border: 1px solid $color;
+  color: $color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  @include padding-x(25px);
+  font-size: .9em;
+  transition: all .25s ease-in-out;
+  
+  &:hover,
+  &:focus {
+    background-color: $color;
+    color: color-contrast($color);
+  }
+  
+}
