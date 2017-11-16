@@ -449,8 +449,28 @@ class API implements GET, POST, PUT, DELETE {
         )
       )),
       function($post) use ($tag) { 
+        
+        $normalized = strtolower(str_replace(' ', '-', $tag));
+        
         if( !($tags = $post->meta['tags']) ) return false;
-        else return in_array($tag, $tags);
+        else {
+          
+          if( gettype($tags) == 'string' ) {
+            
+            $tags = explode(',', $tags);
+            
+          }
+          
+          $tags = array_map(function($tag){
+              
+            return strtolower(str_replace(' ', '-', $tag));
+
+          }, $tags);
+
+          return in_array($normalized, $tags);
+          
+        }
+        
       }
     );
     
