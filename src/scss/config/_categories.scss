@@ -1,0 +1,12 @@
+/**
+ * Defines the expected blog categories
+ * and helps implement color coding (optional).
+ */
+$categories: (
+  
+  'web-development'     : color('lime'),
+  'web-design'          : color('blue'),
+  'graphic-design'      : color('coral'),
+  'marketing'           : color('purple')
+  
+);

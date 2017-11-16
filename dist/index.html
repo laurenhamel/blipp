@@ -28,21 +28,33 @@
 </template>
 
 <template id="snippet">
-  <div class="snippet">
+  <div class="snippet" 
+       :class="[ post.meta.category ? 'category-' + $options.filters.id(post.meta.category) : '']">
     
-    <div class="feature"
-         v-if="post.meta.feature" 
-         :style="{ 'background-image': 'url(' + post.meta.feature + ')' }"></div>
+    <div class="feature" v-if="post.meta.feature">
+      
+      <div class="image" :style="{ 'background-image': 'url(' + post.meta.feature + ')' }"></div>
+      
+      <div class="overlay"></div>
+    
+      <router-link v-if="post.meta.category" 
+                   tag="a"
+                   class="category"
+                   :to="'category/' + $options.filters.id(post.meta.category)">
+        {{post.meta.category}}
+      </router-link>
+      
+      <h1 class="heading">{{post.meta.title}}</h1>
+      
+    </div>
     
     <div class="content">
     
-      <h1>{{post.meta.title}}</h1>
-    
-      <p>{{post.meta.description}}</p>
+      <div class="description">{{post.meta.description}}</div>
       
       <router-link :to="link + post.id" 
                    tag="button" 
-                   class="button">
+                   class="button more">
         Read More
       </router-link>
       

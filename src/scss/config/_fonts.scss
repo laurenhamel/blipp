@@ -1,0 +1,15 @@
+@include google-font('Barlow');
+@include google-font('Open Sans');
+@include google-font('Open Sans Condensed', 300);
+@include google-font('Sacramento');
+@include google-font('Josefin Slab');
+
+$fonts: (
+  'heading': (Barlow, sans-serif),
+  'body': ('Open Sans', sans-serif),
+  'caption': ('Open Sans Condensed', sans-serif),
+  'cursive': (Sacramento, cursive),
+  'serif': ('Josefin Slab', serif)
+);
+
+$brandy-fonts-map: $fonts;

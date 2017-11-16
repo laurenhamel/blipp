@@ -1,62 +1,74 @@
 // Constants
-var API_PATH = '/markdown-blog/api/';
+const API_PATH = '/markdown-blog/api/';
 
-// Constructors
-var API = function( options ) {
+// Classes
+class API {
   
-  this.src = API_PATH;
-  this.params = $.extend({}, options);
+  constructor( options ) {
+    this.params = $.extend({}, options);
+    this.src = API_PATH;
+  }
   
   // Posts
-  this.getPosts = function( options ){
+  getPosts(options) {
     
     return $.getJSON( this.src + '/posts/?' + $.param(this.params) );
     
-  };
-  this.getPostsByTag = function( tag ){
+  }
+  getPostsByTag(tag) {
     
     return $.getJSON( this.src + '/posts/tag/' + tag + '/?' + $.param(this.params) );
     
-  };
-  this.getPostsByCategory = function( category ){
+  }
+  getPostsByCategory(category) {
     
     return $.getJSON( this.src + '/posts/category/' + category + '/?' + $.param(this.params) );
     
-  };
-  this.getPostById = function( id ){
+  }
+  getPostById(id) {
     
     return $.getJSON( this.src + '/posts/id/' + id + '/' );
     
-  };
+  }
   
   // Tags
-  this.getTags = function(){
+  getTags() {
     
     return $.getJSON( this.src + '/tags/?' + $.param(this.params) );
     
-  };
+  }
   
   // Categories
-  this.getCategories = function(){
+  getCategories() {
     
     return $.getJSON( this.src + '/categories/?' + $.param(this.params) );
     
-  };
+  }
   
-};
+}
 
 // Globals
-var filters = {};
-var methods = {};
+const filters = {
+  
+  id( value, delimiter = '-' ) {
+    
+    if( typeof value != 'string' ) return value;
+    
+    return value.replace(/ /g, delimiter).toLowerCase();
+    
+  }
+  
+};
+const methods = {};
 
 // Feed
-var Feed = Vue.component('feed', {
+let Feed = Vue.component('feed', {
   
   template: '#feed',
   
   props: ['limit', 'sort', 'order'],
   
-  data: function(){
+  data() {
     return {
       posts: [],
       next: {},
@@ -69,7 +81,7 @@ var Feed = Vue.component('feed', {
   
   methods: $.extend({
     
-    loadMore: function( delay ){
+    loadMore( delay ) {
       
       delay = delay || 0;
       
@@ -86,11 +98,11 @@ var Feed = Vue.component('feed', {
       self.loading = true;
     
       // Get posts.
-      api.getPosts().then(function(response){
+      api.getPosts().then((response) => {
 
         setTimeout(function(){
           
-          self.posts = self.posts.concat(response.data);
+          self.posts = [...self.posts, ...response.data];
           self.loading = false;
           
         }, delay);
@@ -108,7 +120,7 @@ var Feed = Vue.component('feed', {
     
   }, methods),
   
-  created: function(){
+  created() {
     
     var self = this,
         api = new API({
@@ -118,7 +130,7 @@ var Feed = Vue.component('feed', {
         });
     
     // Get posts.
-    api.getPosts().then(function(response){
+    api.getPosts().then((response) => {
     
       self.posts = response.data;
       
@@ -142,7 +154,7 @@ var Snippet = Vue.component('snippet', {
   
   props: ['post', 'link'],
   
-  data: function(){
+  data() {
     return {};
   },
   
@@ -159,7 +171,7 @@ var Post = Vue.component('post', {
   
   props: ['id'],
   
-  data: function(){
+  data() {
     return {
       post: {}
     };
@@ -169,27 +181,27 @@ var Post = Vue.component('post', {
   
   methods: $.extend({}, methods),
   
-  created: function(){
+  created() {
     
     var self = this,
-        api = new API();
+        api = new API(); 
     
     // Get post by ID.
-    api.getPostById( this.$route.params.id ).then(function(response){
-      
+    api.getPostById( self.$route.params.id ).then((response) => {
+    
       self.post = response.data;
       
     });
     
   },
   
-  beforeRouteUpdate: function(to, from, next){
+  beforeRouteUpdate(to, from, next) {
     
     var self = this,
         api = new API();
     
     // Get post by ID.
-    api.getPostById( to.$route.params.id ).then(function(response){
+    api.getPostById( to.$route.params.id ).then((response) => {
       
       self.post = response.data;
       
@@ -208,7 +220,7 @@ var Category = Vue.component('category', {
   
   props: ['category', 'limit', 'sort', 'order'],
   
-  data: function(){
+  data() {
     return {
       posts: []
     };
@@ -218,9 +230,9 @@ var Category = Vue.component('category', {
   
   filters: $.extend({}, filters),
   
-  created: function(){
+  created() {
     
-    var self = this,
+    let self = this,
         api = new API({
           limit: this.limit,
           sort: this.sort,
@@ -228,7 +240,7 @@ var Category = Vue.component('category', {
         });
     
     // Get posts by category.
-    api.getPostsByCategory( this.$route.params.category ).then(function(response){
+    api.getPostsByCategory( self.$route.params.category ).then((response) => {
       
       self.posts = response.data; console.log(response);
       
@@ -236,9 +248,9 @@ var Category = Vue.component('category', {
     
   },
   
-  beforeRouteUpdate: function(to, from, next){
+  beforeRouteUpdate(to, from, next) {
     
-    var self = this,
+    let self = this,
         api = new API({
           limit: this.limit,
           sort: this.sort,
@@ -246,7 +258,7 @@ var Category = Vue.component('category', {
         });
     
     // Get posts by Category.
-    api.getPostsByCategory( to.$route.params.category ).then(function(response){
+    api.getPostsByCategory( to.$route.params.category ).then((response) => {
       
       self.posts = response.data;
       
@@ -259,7 +271,7 @@ var Category = Vue.component('category', {
 });
 
 // Router
-var Router = new VueRouter({ 
+var router = new VueRouter({ 
   
   routes: [
     { 
@@ -291,7 +303,7 @@ var Router = new VueRouter({
 // Blog
 var Blog = new Vue({
 
-  router: Router,
+  router,
   
   el: '#blog',
 

@@ -69,7 +69,7 @@ class API implements GET, POST, PUT, DELETE {
   }
   
   // Build response data.
-  private function response( $status, array $data = [] ) {
+  private function response( $status, $data = [], array $extra = [] ) {
     
     // Initialize response.
     $response['status'] = [
@@ -77,23 +77,11 @@ class API implements GET, POST, PUT, DELETE {
       'message'   => $this->status[$status]
     ];
     
-    // Pass through data modifiers.
-    $result = $this->modify($data);
-    
-    // Extract data.
-    $data = $result['data'];
-    
-    // Keep any other data.
-    unset($result['data']);
-    
     // Add data.
     if( $status == 200 ) {
       
-      // Save data.
       $response['data'] = $data;
-      
-      // Merge additional data.
-      $response = array_merge($result, $response);
+      $response = array_merge($response, $extra);
       
     }
     
@@ -385,7 +373,17 @@ class API implements GET, POST, PUT, DELETE {
       )
     ));
     
-    return $this->response( 200, $data );
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, $data, $result );
     
   }
   public function getPostsByCategory( $category ) {
@@ -408,12 +406,27 @@ class API implements GET, POST, PUT, DELETE {
         )
       )),
       function($post) use ($category) {
-        if( !($cat = $post->meta['category']) ) return false;
-        else return $cat == $category;
+        
+        $normalized = strtolower(str_replace(' ', '-', $category));
+        
+        if( !($_category = $post->meta['category']) ) return false;
+        
+        else return  $normalized == strtolower(str_replace(' ', '-', $_category));
+        
       }
     );
     
-    return $this->response( 200, $data );
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, $data, $result );
     
   }
   public function getPostsByTag( $tag ) {
@@ -441,7 +454,17 @@ class API implements GET, POST, PUT, DELETE {
       }
     );
     
-    return $this->response( 200, $data );
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, $data, $result );
     
   }
   public function getPostById( $id ) {
@@ -508,7 +531,17 @@ class API implements GET, POST, PUT, DELETE {
       
     }
 
-    return $this->response( 200, array_unique($data) );
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, $data, $result );
     
   }
   
@@ -548,7 +581,17 @@ class API implements GET, POST, PUT, DELETE {
       
     }
 
-    return $this->response( 200, array_unique($data) );
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, $data, $result );
     
   }
   

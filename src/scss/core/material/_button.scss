@@ -10,8 +10,8 @@
   align-items: center;
   height: 50px;
   @include padding-x(25px);
-  font-size: .9em;
   transition: all .25s ease-in-out;
+  font-family: inherit;
   
   &:hover,
   &:focus {

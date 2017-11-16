@@ -16,7 +16,7 @@ module.exports = function(grunt){
       },
       js: {
         files: ['src/js/**/*.js'],
-        tasks: ['jshint:js', 'copy:js']
+        tasks: ['jshint:js', 'babel']
       },
       php: {
         files: ['src/php/**/*.php', 'router.json'],
@@ -32,7 +32,8 @@ module.exports = function(grunt){
           'package.json', 
           'composer.json', 
           'package-config.json',
-          '.jshintrc'
+          '.jshintrc',
+          '.babelrc'
         ],
         tasks: ['jshint:config', 'startup'],
         options: { reload: true }
@@ -40,6 +41,19 @@ module.exports = function(grunt){
       blog: {
         files: ['posts/**/*', 'drafts/**/*'],
         tasks: ['includes', 'replace:dev']
+      }
+    },
+    babel: {
+      options: {},
+      js: {
+        files: [
+          {
+            expand: true,
+            cwd: 'src/js/',
+            src: ['**/*.js'],
+            dest: 'dist/js/'
+          }
+        ]
       }
     },
     sass: {
@@ -232,11 +246,6 @@ module.exports = function(grunt){
       }
     },
     copy: {
-      js: {
-        files: [
-          { expand: true, cwd: 'src/js', src: ['*.js'], dest: 'dist/js' }
-        ]
-      },
       php: {
         files: [
           { expand: true, cwd: 'src/php', src: ['**/*.php'], dest: 'dist/php' }
@@ -263,13 +272,14 @@ module.exports = function(grunt){
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-postcss');
   grunt.loadNpmTasks('grunt-includes');
+  grunt.loadNpmTasks('grunt-babel');
   
   grunt.registerTask('default', ['dev']);
   grunt.registerTask('startup', [
     'copydeps',
     'sass:dev',
     'jshint',
-    'copy:js',
+    'babel',
     'copy:php',
     'copy:assets',
     'includes',
@@ -284,8 +294,8 @@ module.exports = function(grunt){
     'cssmin',
     'uglify',
     'copy:assets',
-    'copy:js',
     'copy:php',
+    'babel',
     'includes',
     'replace:dist'
   ]);

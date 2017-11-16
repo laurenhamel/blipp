@@ -5,7 +5,7 @@ feature: //source.unsplash.com/random
 author: Lauren Hamel
 date-created: 11/07/2017 12:00PM
 date-modified: 11/08/2017 1:00AM
-category: Web Development
+category: Web Design
 tags: [blog, web design, web development, markdown]
 ---
 

@@ -1,0 +1,49 @@
+$colors: (
+  
+  'black': (
+    'base': #222222
+  ),
+  
+  'white': (
+    'base': #FFFFFF
+  ),
+  
+  'grey': (
+    'base': #9999A1,
+    'dark': #808080,
+    'light': #CDD7D6
+  ),
+  
+  'slate': (
+    'base': #95A3B3
+  ),
+  
+  'purple': (
+    'base': #542344,
+  ),
+  
+  'mint': (
+    'base': #84DCC6
+  ),
+  
+  'coral': (
+    'base': #F87060
+  ),
+  
+  'lime': (
+    'base': #C3D350
+  ),
+  
+  'blue': (
+    'base': #005377
+  ),
+  
+  'orange': (
+    'base': #F1A208
+  )
+  
+);
+
+$brandy-colors-map: $colors;
+$brandy-dark-text: color('black');
+$brandy-light-text: color('white');
