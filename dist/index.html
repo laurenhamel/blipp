@@ -17,8 +17,7 @@
       
     <snippet v-for="post in posts" 
              :post="post" 
-             :key="post"
-             link="post/"></snippet>
+             :key="post"></snippet>
     
     <div v-if="loading">FETCHING POSTS...</div>
     
@@ -52,7 +51,15 @@
     
       <div class="description">{{post.meta.description}}</div>
       
-      <router-link :to="link + post.id" 
+      <ul class="tags" v-if="post.meta.tags">
+        <router-link v-for="tag in post.meta.tags" 
+                     tag="li"
+                     :to="'/tag/' + $options.filters.id(tag)">
+          #{{tag | id}}
+        </router-link>
+      </ul>
+      
+      <router-link :to="'/post/' + post.id" 
                    tag="button" 
                    class="button more">
         Read More
@@ -72,8 +79,17 @@
       
     <snippet v-for="post in posts" 
              :post="post" 
-             :key="post"
-             link="../post/"></snippet>
+             :key="post"></snippet>
+    
+  </div>
+</template>
+
+<template id="tag">
+  <div class="tag">
+      
+    <snippet v-for="post in posts" 
+             :post="post" 
+             :key="post"></snippet>
     
   </div>
 </template>

@@ -166,7 +166,7 @@ var Snippet = Vue.component('snippet', {
 
   template: '#snippet',
 
-  props: ['post', 'link'],
+  props: ['post'],
 
   data: function data() {
     return {};
@@ -232,12 +232,48 @@ var Category = Vue.component('category', {
 
   data: function data() {
     return {
-      posts: []
+      posts: [],
+      next: {},
+      more: false,
+      loading: false
     };
   },
 
 
-  methods: $.extend({}, methods),
+  methods: $.extend({
+    loadMore: function loadMore(delay) {
+
+      delay = delay || 0;
+
+      var self = this,
+          api = new API({
+        sort: this.sort,
+        order: this.order,
+        limit: this.next.limit,
+        offset: this.next.offset
+      });
+
+      self.next = {};
+      self.more = false;
+      self.loading = true;
+
+      // Get posts.
+      api.getPosts().then(function (response) {
+
+        setTimeout(function () {
+
+          self.posts = [].concat(_toConsumableArray(self.posts), _toConsumableArray(response.data));
+          self.loading = false;
+        }, delay);
+
+        if (response.next) {
+
+          self.more = true;
+          self.next = response.next;
+        }
+      });
+    }
+  }, methods),
 
   filters: $.extend({}, filters),
 
@@ -275,6 +311,94 @@ var Category = Vue.component('category', {
   }
 });
 
+// Tag
+var Tag = Vue.component('tag', {
+
+  template: '#tag',
+
+  props: ['tag', 'limit', 'sort', 'order'],
+
+  data: function data() {
+    return {
+      posts: [],
+      next: {},
+      more: false,
+      loading: false
+    };
+  },
+
+
+  methods: $.extend({
+    loadMore: function loadMore(delay) {
+
+      delay = delay || 0;
+
+      var self = this,
+          api = new API({
+        sort: this.sort,
+        order: this.order,
+        limit: this.next.limit,
+        offset: this.next.offset
+      });
+
+      self.next = {};
+      self.more = false;
+      self.loading = true;
+
+      // Get posts.
+      api.getPosts().then(function (response) {
+
+        setTimeout(function () {
+
+          self.posts = [].concat(_toConsumableArray(self.posts), _toConsumableArray(response.data));
+          self.loading = false;
+        }, delay);
+
+        if (response.next) {
+
+          self.more = true;
+          self.next = response.next;
+        }
+      });
+    }
+  }, methods),
+
+  filters: $.extend({}, filters),
+
+  created: function created() {
+
+    var self = this,
+        api = new API({
+      limit: this.limit,
+      sort: this.sort,
+      order: this.order
+    });
+
+    // Get posts by category.
+    api.getPostsByTag(self.$route.params.tag).then(function (response) {
+
+      self.posts = response.data;console.log(response);
+    });
+  },
+  beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
+
+    var self = this,
+        api = new API({
+      limit: this.limit,
+      sort: this.sort,
+      order: this.order
+    });
+
+    // Get posts by Category.
+    api.getPostsByTag(to.$route.params.tag).then(function (response) {
+
+      self.posts = response.data;
+
+      next();
+    });
+  }
+});
+
 // Router
 var router = new VueRouter({
 
@@ -292,6 +416,14 @@ var router = new VueRouter({
   }, {
     path: '/category/:category',
     component: Category,
+    props: {
+      limit: 10,
+      sort: 'date-created',
+      order: 'newest'
+    }
+  }, {
+    path: '/tag/:tag',
+    component: Tag,
     props: {
       limit: 10,
       sort: 'date-created',

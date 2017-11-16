@@ -148,11 +148,11 @@ let Feed = Vue.component('feed', {
 });
 
 // Snippet
-var Snippet = Vue.component('snippet', {
+let Snippet = Vue.component('snippet', {
   
   template: '#snippet',
   
-  props: ['post', 'link'],
+  props: ['post'],
   
   data() {
     return {};
@@ -165,7 +165,7 @@ var Snippet = Vue.component('snippet', {
 });
 
 // Post
-var Post = Vue.component('post', {
+let Post = Vue.component('post', {
   
   template: '#post',
   
@@ -214,7 +214,7 @@ var Post = Vue.component('post', {
 });
 
 // Category
-var Category = Vue.component('category', {
+let Category = Vue.component('category', {
   
   template: '#category',
   
@@ -222,11 +222,53 @@ var Category = Vue.component('category', {
   
   data() {
     return {
-      posts: []
+      posts: [],
+      next: {},
+      more: false,
+      loading: false
     };
   },
   
-  methods: $.extend({}, methods),
+  methods: $.extend({
+    
+    loadMore( delay ) {
+      
+      delay = delay || 0;
+      
+      var self = this,
+          api = new API({
+            sort: this.sort,
+            order: this.order,
+            limit: this.next.limit,
+            offset: this.next.offset
+          });
+      
+      self.next = {};
+      self.more = false;
+      self.loading = true;
+    
+      // Get posts.
+      api.getPosts().then((response) => {
+
+        setTimeout(function(){
+          
+          self.posts = [...self.posts, ...response.data];
+          self.loading = false;
+          
+        }, delay);
+
+        if( response.next ) {
+
+          self.more = true;
+          self.next = response.next;
+
+        }
+
+      });
+      
+    }
+    
+  }, methods),
   
   filters: $.extend({}, filters),
   
@@ -270,8 +312,107 @@ var Category = Vue.component('category', {
   
 });
 
+// Tag
+let Tag = Vue.component('tag', {
+  
+  template: '#tag',
+  
+  props: ['tag', 'limit', 'sort', 'order'],
+  
+  data() {
+    return {
+      posts: [],
+      next: {},
+      more: false,
+      loading: false
+    };
+  },
+  
+  methods: $.extend({
+    
+    loadMore( delay ) {
+      
+      delay = delay || 0;
+      
+      var self = this,
+          api = new API({
+            sort: this.sort,
+            order: this.order,
+            limit: this.next.limit,
+            offset: this.next.offset
+          });
+      
+      self.next = {};
+      self.more = false;
+      self.loading = true;
+    
+      // Get posts.
+      api.getPosts().then((response) => {
+
+        setTimeout(function(){
+          
+          self.posts = [...self.posts, ...response.data];
+          self.loading = false;
+          
+        }, delay);
+
+        if( response.next ) {
+
+          self.more = true;
+          self.next = response.next;
+
+        }
+
+      });
+      
+    }
+    
+  }, methods),
+  
+  filters: $.extend({}, filters),
+  
+  created() {
+    
+    let self = this,
+        api = new API({
+          limit: this.limit,
+          sort: this.sort,
+          order: this.order
+        });
+    
+    // Get posts by category.
+    api.getPostsByTag( self.$route.params.tag ).then((response) => {
+      
+      self.posts = response.data; console.log(response);
+      
+    });
+    
+  },
+  
+  beforeRouteUpdate(to, from, next) {
+    
+    let self = this,
+        api = new API({
+          limit: this.limit,
+          sort: this.sort,
+          order: this.order
+        });
+    
+    // Get posts by Category.
+    api.getPostsByTag( to.$route.params.tag ).then((response) => {
+      
+      self.posts = response.data;
+      
+      next();
+      
+    });
+    
+  }
+  
+});
+
 // Router
-var router = new VueRouter({ 
+let router = new VueRouter({ 
   
   routes: [
     { 
@@ -295,13 +436,22 @@ var router = new VueRouter({
         sort: 'date-created',
         order: 'newest'
       }
+    },
+    { 
+      path: '/tag/:tag', 
+      component: Tag, 
+      props: { 
+        limit: 10, 
+        sort: 'date-created',
+        order: 'newest'
+      }
     }
   ]
   
 });
 
 // Blog
-var Blog = new Vue({
+let Blog = new Vue({
 
   router,
   

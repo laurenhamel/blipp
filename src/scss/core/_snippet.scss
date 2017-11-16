@@ -109,6 +109,36 @@
   .description {}
   
   /**
+   * Tags
+   */
+  .tags {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    font-family: font('caption');
+    font-size: .9em;
+    margin-top: 15px;
+    
+    li {
+      
+      $background: color('grey', 'light');
+      
+      padding: 5px 10px;
+      border-radius: 3px;
+      background-color: $background;
+      color: color-contrast($background);
+      cursor: pointer;
+      
+      + li { margin-left: 5px; }
+      
+    }
+    
+  }
+  
+  /**
    * More Button
    */
   .more {
