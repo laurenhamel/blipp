@@ -1,0 +1,251 @@
+/**
+ * Each post has its own separate page,
+ * but all posts sitewide across categories
+ * and tags will hold the same appearance.
+ * The content of a post is controlled by
+ * the post's markdown file, but the layout
+ * and design of metadata objects are slightly
+ * more flexible.
+ */
+.post {
+  
+  $default: color('black');
+  
+  /**
+   * Feature Image Container
+   */
+  .feature { 
+    height: 400px;
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 5px solid $default;
+    
+    &.x-center { justify-content: center; }
+    &.x-left { justify-content: flex-start; }
+    &.x-right { justify-content: flex-end; }
+    
+    &.y-center { align-items: center; }
+    &.y-top { align-items: flex-start; }
+    &.y-bottom { align-items: flex-end; }
+  
+    /**
+     * Feature Image
+     */
+    .image {
+      width: 100%; 
+      min-height: 100%;
+      
+      &.x-contain { width: 100%; min-width: auto; }
+      &.x-cover { width: auto; min-width: 100%; }
+      
+      &.y-contain { height: 100%; min-height: auto; }
+      &.y-cover { height: auto; min-height: 100%; }
+      
+    }
+  
+  }
+  
+  /**
+   * Category Label
+   */
+  .category {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+    text-transform: uppercase;
+    font-family: font('caption');
+    font-size: 1.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @include padding-x(25px);
+    height: 50px;
+    transition: all .25s ease-in-out;
+    box-shadow: 2px 3px 5px rgba(color('black'), .2);
+    background-color: $default;
+    color: color-contrast($default);
+    
+    &:hover,
+    &:focus {
+      transform: translatey(-2px);
+    }
+    
+  }
+  
+  /**
+   * Content Container
+   */
+  .content { 
+    padding: 25px; 
+    
+    img,
+    video,
+    audio,
+    iframe,
+    object { 
+      display: block;
+      max-width: 100%; 
+      margin: 0 auto;
+      
+      &[class*=" float-"],
+      &[class^="float-"] {
+        &::after { content: ""; clear: both; }
+      }
+      
+      &.float-left {
+        @include breakpoint( screen('large') ) {
+          float: left;
+          margin-left: 0;
+          max-width: 50%;
+          margin-right: 25px;
+        }
+      }
+      
+      &.float-right {
+        @include breakpoint( screen('large') ) {
+          float: right;
+          margin-right: 0;
+          max-width: 50%;
+          margin-left: 25px;
+        }
+      }
+      
+    }
+  
+  }
+  
+  /**
+   * Heading
+   */
+  .heading {
+    font-size: 2.5em;
+    font-weight: bold;
+    font-style: normal;
+    margin-top: 0;
+    margin-bottom: .5em;
+  }
+  
+  /**
+   * Author & Date
+   */
+  .author, .date { color: color('slate'); font-size: .95em; }
+  
+  /**
+   * Author
+   */
+  .author {
+    
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      display: inline;
+      
+      li { 
+        display: inline; 
+        
+        + li::before { content: ', '; }
+        
+      }
+      
+    }
+    
+  }
+  
+  /**
+   * Date
+   */
+  .date {}
+  
+  /**
+   * Description
+   */
+  .description {
+    margin-top: .5em;
+    margin-bottom: 1em;
+    font-size: 1.5em;
+    font-family: font('caption');
+    font-style: normal;
+    font-weight: normal;
+  }
+  
+  /**
+   * Body
+   */
+  .body { margin-top: 50px; }
+  
+  /**
+   * Tags
+   */
+  .tags {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    font-family: font('caption');
+    font-size: .9em;
+    margin-top: 25px;
+  }
+  
+  /**
+   * Category Color Coding
+   *
+   * Enable color coding on categories by
+   * setting the boolean value inside the 
+   * @if conditional to TRUE. Otherwise,
+   * use FALSE to quickly disable color coding.
+   *
+   * Alternatively, use the people example 
+   * to help build your own visual categorization
+   * styles.
+   */ 
+  @if( true ) {
+    
+    @each $category, $color in $categories {
+
+      &.category-#{$category} {
+        
+        /**
+         * Links
+         */
+        a { color: $color; }
+
+        /**
+         * Feature Container
+         */
+        .feature {
+          border-bottom-color: $color;
+        }
+        
+        /**
+         * Category Label
+         */
+        .category {
+          background-color: $color;
+          color: color-contrast($color);
+        }
+        
+        /**
+         * Tags
+         */
+        .tag {
+          
+          &:hover, 
+          &:focus {
+            background-color: $color;
+            color: color-contrast($color);
+          }
+          
+        }
+
+      }
+
+    }
+    
+  }
+  
+}

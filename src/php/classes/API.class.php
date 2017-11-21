@@ -6,6 +6,7 @@ interface GET {
   public function getPosts();
   public function getPostsByCategory( $category );
   public function getPostsByTag( $tag );
+  public function getPostsByAuthor( $author );
   public function getPostById( $id );
   
   // Categories
@@ -13,6 +14,10 @@ interface GET {
   
   // Tags
   public function getTags();
+  
+  // Authors
+  public function getAuthors();
+  public function getAuthorByName( $name );
   
 }
 
@@ -122,6 +127,7 @@ class API implements GET, POST, PUT, DELETE {
                 case 'id': return $this->getPostById($request[1]);
                 case 'category': return $this->getPostsByCategory($request[1]);
                 case 'tag': return $this->getPostsByTag($request[1]);
+                case 'author': return $this->getPostsByAuthor($request[1]);
               }
               
             }
@@ -145,6 +151,25 @@ class API implements GET, POST, PUT, DELETE {
           case 'tags':
             
             return $this->getTags();
+            
+            break;
+            
+          // Authors
+          case 'authors': 
+            
+            if( $request[0] ) {
+              
+              switch($request[0]) {
+                case 'name': return $this->getAuthorByName($request[1]);
+              }
+              
+            }
+            
+            else {
+              
+              return $this->getAuthors();
+              
+            }
             
             break;
             
@@ -487,6 +512,59 @@ class API implements GET, POST, PUT, DELETE {
     return $this->response( 200, $data, $result );
     
   }
+  public function getPostsByAuthor( $author ) {
+    
+    // Get path to posts.
+    $path = API_ROOT.json_decode(API_ROUTER)->posts;
+    
+    // Retrieve the posts with the given author.
+    $data = array_filter(
+      array_map(function($post) use ($path){ 
+        return new Markdown( "{$path}{$post}" );
+      }, array_values( 
+        array_filter(
+          array_filter(
+            scandir( $path ), 
+            function($post) {
+              return strpos($post, '.md') == (strlen($post) - strlen('.md'));
+            }
+          )
+        )
+      )),
+      function($post) use ($author) {
+        
+        $normalized = strtolower(str_replace(' ', '-', $author));
+        
+        if( !($_author = $post->meta['author']) ) return false;
+        
+        elseif ( is_array($_author) ) {
+          
+          $_author = array_map(function($a){
+            return strtolower(str_replace(' ', '-', $a));
+          }, $_author);
+          
+          return in_array($normalized, $_author);
+          
+        }
+        
+        else return $normalized == strtolower(str_replace(' ', '-', $_author));
+        
+      }
+    );
+    
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, $data, $result );
+    
+  }
   public function getPostById( $id ) {
 
     // Get path to posts.
@@ -561,7 +639,7 @@ class API implements GET, POST, PUT, DELETE {
     unset($result['data']);
     
     // Return response.
-    return $this->response( 200, $data, $result );
+    return $this->response( 200, array_unique($data), $result );
     
   }
   
@@ -611,7 +689,100 @@ class API implements GET, POST, PUT, DELETE {
     unset($result['data']);
     
     // Return response.
-    return $this->response( 200, $data, $result );
+    return $this->response( 200, array_unique($data), $result );
+    
+  }
+  
+  // Authors
+  public function getAuthors() {
+    
+    // Get path to posts.
+    $path = API_ROOT.json_decode(API_ROUTER)->posts;
+    
+    // Capture the post categories.
+    $data = [];
+    
+    // Retrieve the post.
+    $posts = array_map(function($post) use ($path){
+      return new Markdown( "{$path}{$post}" );
+    }, array_filter( scandir( $path ), function($post) {
+      return strpos($post, '.md') == (strlen($post) - strlen('.md'));
+    }));
+    
+    foreach( $posts as $index => $post ) {
+      
+      if( ($author = $post->meta['author']) ) {
+        
+        if( is_array($author) ) {
+          
+          $data = array_merge($data, $author);
+          
+        }
+        
+        else {
+          
+          $data[] = $author; 
+          
+        }
+        
+      }
+      
+    }
+
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, array_unique($data), $result );
+    
+  }
+  public function getAuthorByName( $name ) {
+    
+    // Get path to authors.
+    $path = API_ROOT.json_decode(API_ROUTER)->authors;
+    
+    // Retrieve the author info with the given name.
+    $data = array_filter(
+      array_map(function($author) use ($path){ 
+        return new Markdown( "{$path}{$author}" );
+      }, array_values( 
+        array_filter(
+          array_filter(
+            scandir( $path ), 
+            function($post) {
+              return strpos($post, '.md') == (strlen($post) - strlen('.md'));
+            }
+          )
+        )
+      )),
+      function($post) use ($name) {
+        
+        $normalized = strtolower(str_replace(' ', '-', $name));
+        
+        if( !($_name = $post->meta['name']) ) return false;
+        
+        else return  $normalized == strtolower(str_replace(' ', '-', $_name));
+        
+      }
+    );
+
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, $data[0], $result );
     
   }
   

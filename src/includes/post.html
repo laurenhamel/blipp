@@ -1,1 +1,44 @@
-<article class="post" v-html="post.html"></article>
+<article class="post" 
+         :class="[ post.meta.category ? 
+                   'category-' + $options.filters.id(post.meta.category) : ''
+                 ]">
+  
+  <div class="feature">
+    <img class="image" :src="post.meta.feature">
+    <router-link tag="a" 
+                 :to="'/category/' + post.meta.category"
+                 class="category">
+      {{post.meta.category}}
+    </router-link>
+  </div>
+  
+  <div class="content">
+    <h1 class="heading">{{post.meta.title}}</h1>
+    <p class="description" v-html="post.meta.description"></p>
+    <div class="author">
+      By 
+      <ul v-if="post.meta.author instanceof Array">
+        <li v-for="author in post.meta.author">
+          <router-link :to="'/author/' + $options.filters.id(author)">
+            {{author}}
+          </router-link>
+        </li>
+      </ul>
+      <span v-else>
+        <router-link :to="'/author/' + $options.filters.id(post.meta.author)">
+          {{post.meta.author}}
+        </router-link>
+      </span>
+    </div>
+    <p class="date">{{post.meta['date-created'].date | date}}</p>
+    <div class="body" v-html="post.html"></div>
+    <ul class="tags">
+      <li v-for="tag in post.meta.tags" class="tag">
+        <router-link tag="a" :to="'/tag/' + $options.filters.id(tag)">
+          #{{tag | id}}
+        </router-link>
+      </li>
+    </ul>
+  </div>
+
+</article>

@@ -10,10 +10,15 @@ body {
   margin: 0;
   font-family: font('body');
   font-size: 14px;
+  line-height: 1.5;
   color: $brandy-dark-text;
 }
 
-a { text-decoration: none; }
+a { 
+  text-decoration: none;
+  color: color('grey', 'dark');
+  display: inline-block;
+}
 
 a, #{$all-buttons} {
   cursor: pointer;

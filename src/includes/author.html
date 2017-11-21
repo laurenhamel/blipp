@@ -1,0 +1,29 @@
+<div class="author">
+  
+  <div class="about">
+    
+    <div class="portrait">
+      <img class="image" :src="getFbProfileImage()">
+    </div>
+  
+    <h1 class="name">{{about.meta.name}}</h1>
+    
+    <div class="job">{{about.meta.title}} at {{about.meta.employer}}</div>
+    
+    <div class="bio" v-if="about.html != ''" v-html="about.html"></div>
+    
+  </div>
+  
+  <div class="posts">
+    
+    <snippet v-for="post in posts" 
+           :post="post" 
+           :key="post"></snippet>
+  
+    <div v-if="loading">FETCHING POSTS...</div>
+
+    <button v-if="more && !loading" @click="loadMore( 1000 )">Load More</button>
+  
+  </div>
+  
+</div>

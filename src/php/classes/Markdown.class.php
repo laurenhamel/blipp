@@ -84,12 +84,12 @@ class Markdown {
     
     // Handle strings only
     if( gettype($string) !== 'string' ) return $string;
- 
+
     // Array types
     if( preg_match('/^\[(.+?)\]$/', $string) ) {
 
       $string = array_map('trim', explode(',', preg_replace('/\[|\]/', '', $string)));
-      
+
       foreach( $string as $key => &$value ) {
 
         $string[$key] = $this->frontmatter_type( $value );
@@ -99,18 +99,20 @@ class Markdown {
     }
     
     // Object types
-    elseif( preg_match('/^\{(.+?)\}$/', $string) ) {
-  
+    elseif( preg_match('/^\{ *(.+?) *\}$/', $string) ) {
+
       $string = array_map(function($meta){
         return array_map('trim', preg_split('/:/', $meta, 2));
       }, array_map('trim', preg_split(
         '/,(?=[^\]]*(?:[\[]|$))/', preg_replace('/\{|\}/', '', $string)
       )));
 
-      foreach( $string as $index => &$array ) {
-        foreach( $array as $key => &$value ) {
-          $array[$key] = $this->frontmatter_type( $value );
-        }
+      foreach( $string as $index => $array ) {
+        
+        $string[$array[0]] = $this->frontmatter_type( $array[1] );
+        
+        unset($string[$index]);
+        
       }
       
     }
@@ -122,6 +124,13 @@ class Markdown {
       
     }
     
+    // Number types
+    elseif( is_numeric($string) ) {
+      
+      $string = (float) $string;
+      
+    }
+ 
     return $string;
     
   }
@@ -228,21 +237,23 @@ class Markdown {
     }));
     
     // Typeify
-    foreach( $frontmatter as &$meta ) {
+    foreach( $frontmatter as &$meta ) { 
       
       $meta[1] = $this->frontmatter_type( $meta[1] );
   
     }
     
     // Reduce
-    foreach( $frontmatter as $index => $meta ) {
+    for( $i = count($frontmatter) - 1; $i > -1; $i-- ) { 
       
-      $frontmatter[$meta[0]] = $meta[1]; 
+      $meta = $frontmatter[$i];
       
-      unset($frontmatter[$index]);
+      $frontmatter[$meta[0]] = $meta[1];
+      
+      unset($frontmatter[$i]);
       
     }
-    
+
     // Save
     $this->meta = array_merge(
       $frontmatter, 

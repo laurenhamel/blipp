@@ -24,7 +24,7 @@ var API = function () {
 
   _createClass(API, [{
     key: 'getPosts',
-    value: function getPosts(options) {
+    value: function getPosts() {
 
       return $.getJSON(this.src + '/posts/?' + $.param(this.params));
     }
@@ -39,6 +39,12 @@ var API = function () {
     value: function getPostsByCategory(category) {
 
       return $.getJSON(this.src + '/posts/category/' + category + '/?' + $.param(this.params));
+    }
+  }, {
+    key: 'getPostsByAuthor',
+    value: function getPostsByAuthor(author) {
+
+      return $.getJSON(this.src + '/posts/author/' + author + '/?' + $.param(this.params));
     }
   }, {
     key: 'getPostById',
@@ -64,9 +70,47 @@ var API = function () {
 
       return $.getJSON(this.src + '/categories/?' + $.param(this.params));
     }
+
+    // Authors
+
+  }, {
+    key: 'getAuthors',
+    value: function getAuthors() {
+
+      return $.getJSON(this.src + '/authors/?' + $.param(this.params));
+    }
+  }, {
+    key: 'getAuthorByName',
+    value: function getAuthorByName(name) {
+
+      return $.getJSON(this.src + '/authors/name/' + name + '/?' + $.param(this.params));
+    }
   }]);
 
   return API;
+}();
+
+var Facebook = function () {
+  function Facebook(options) {
+    _classCallCheck(this, Facebook);
+
+    this.params = $.extend({}, options);
+    this.src = '//graph.facebook.com';
+    this.version = 'v2.11';
+  }
+
+  // User
+
+
+  _createClass(Facebook, [{
+    key: 'getUserProfileImage',
+    value: function getUserProfileImage(id) {
+
+      return this.src + '/' + this.version + '/' + id + '/picture/?' + $.param(this.params);
+    }
+  }]);
+
+  return Facebook;
 }();
 
 // Globals
@@ -80,6 +124,14 @@ var filters = {
     if (typeof value != 'string') return value;
 
     return value.replace(/ /g, delimiter).toLowerCase();
+  },
+  date: function date(value) {
+    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'MMMM d, YYYY';
+
+
+    var date = moment(value);
+
+    return date.isValid() ? date.format(format) : value;
   }
 };
 var methods = {};
@@ -188,7 +240,20 @@ var Post = Vue.component('post', {
 
   data: function data() {
     return {
-      post: {}
+      post: {
+        config: {},
+        meta: {
+          'date-created': {},
+          'date-modified': {}
+        },
+        html: null,
+        contents: null,
+        filename: null,
+        frontmatter: null,
+        id: null,
+        markdown: null,
+        path: null
+      }
     };
   },
 
@@ -214,7 +279,7 @@ var Post = Vue.component('post', {
         api = new API();
 
     // Get post by ID.
-    api.getPostById(to.$route.params.id).then(function (response) {
+    api.getPostById(to.params.id).then(function (response) {
 
       self.post = response.data;
 
@@ -289,7 +354,13 @@ var Category = Vue.component('category', {
     // Get posts by category.
     api.getPostsByCategory(self.$route.params.category).then(function (response) {
 
-      self.posts = response.data;console.log(response);
+      self.posts = response.data;
+
+      if (response.next) {
+
+        self.more = true;
+        self.next = response.next;
+      }
     });
   },
   beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
@@ -305,6 +376,12 @@ var Category = Vue.component('category', {
     api.getPostsByCategory(to.$route.params.category).then(function (response) {
 
       self.posts = response.data;
+
+      if (response.next) {
+
+        self.more = true;
+        self.next = response.next;
+      }
 
       next();
     });
@@ -377,7 +454,13 @@ var Tag = Vue.component('tag', {
     // Get posts by category.
     api.getPostsByTag(self.$route.params.tag).then(function (response) {
 
-      self.posts = response.data;console.log(response);
+      self.posts = response.data;
+
+      if (response.next) {
+
+        self.more = true;
+        self.next = response.next;
+      }
     });
   },
   beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
@@ -393,6 +476,166 @@ var Tag = Vue.component('tag', {
     api.getPostsByTag(to.$route.params.tag).then(function (response) {
 
       self.posts = response.data;
+
+      if (response.next) {
+
+        self.more = true;
+        self.next = response.next;
+      }
+
+      next();
+    });
+  }
+});
+
+// Author
+var Author = Vue.component('author', {
+
+  template: '#author',
+
+  props: ['author', 'limit', 'sort', 'order'],
+
+  data: function data() {
+    return {
+      photo: null,
+      about: {
+        config: {},
+        meta: {
+          facebook: {},
+          linkedin: {},
+          instagram: {},
+          youtube: {},
+          twitter: {},
+          github: {},
+          behance: {},
+          dribbble: {},
+          pinterest: {},
+          snapchat: {},
+          'google+': {}
+        },
+        html: null,
+        markdown: null,
+        frontmatter: null,
+        path: null,
+        filename: null,
+        contents: null
+      },
+      posts: [],
+      next: {},
+      more: false,
+      loading: false
+    };
+  },
+
+
+  methods: $.extend({
+    loadMore: function loadMore(delay) {
+
+      delay = delay || 0;
+
+      var self = this,
+          api = new API({
+        sort: this.sort,
+        order: this.order,
+        limit: this.next.limit,
+        offset: this.next.offset
+      });
+
+      self.next = {};
+      self.more = false;
+      self.loading = true;
+
+      // Get posts.
+      api.getPosts().then(function (response) {
+
+        setTimeout(function () {
+
+          self.posts = [].concat(_toConsumableArray(self.posts), _toConsumableArray(response.data));
+          self.loading = false;
+        }, delay);
+
+        if (response.next) {
+
+          self.more = true;
+          self.next = response.next;
+        }
+      });
+    },
+    getFbProfileImage: function getFbProfileImage() {
+
+      var self = this,
+          id;
+
+      if (id = self.about.meta.facebook.id) {
+
+        var api = new Facebook({
+          width: 300
+        });
+
+        // Get profile image.
+        return api.getUserProfileImage(id);
+      }
+    }
+  }, methods),
+
+  filters: $.extend({}, filters),
+
+  created: function created() {
+
+    var self = this,
+        api = new API({
+      limit: this.limit,
+      sort: this.sort,
+      order: this.order
+    });
+
+    // Get information about author.
+    api.getAuthorByName(self.$route.params.author).then(function (response) {
+
+      self.about = response.data;
+    });
+
+    // Get posts by author.
+    api.getPostsByAuthor(self.$route.params.author).then(function (response) {
+
+      self.posts = response.data;
+
+      if (response.next) {
+
+        self.more = true;
+        self.next = response.next;
+      }
+    });
+  },
+  beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
+
+    var self = this,
+        api = new API({
+      limit: this.limit,
+      sort: this.sort,
+      order: this.order
+    }),
+        deferreds = [];
+
+    // Get information about author.
+    deferreds.push(api.getAuthorByName(to.params.author).then(function (response) {
+
+      self.about = response.data;
+    }));
+
+    // Get posts by author.
+    deferreds.push(api.getPostsByAuthor(to.params.author).then(function (response) {
+
+      self.posts = response.data;
+
+      if (response.next) {
+
+        self.more = true;
+        self.next = response.next;
+      }
+    }));
+
+    $.when(deferreds, function () {
 
       next();
     });
@@ -424,6 +667,14 @@ var router = new VueRouter({
   }, {
     path: '/tag/:tag',
     component: Tag,
+    props: {
+      limit: 10,
+      sort: 'date-created',
+      order: 'newest'
+    }
+  }, {
+    path: '/author/:author',
+    component: Author,
     props: {
       limit: 10,
       sort: 'date-created',

@@ -39,7 +39,7 @@ module.exports = function(grunt){
         options: { reload: true }
       },
       blog: {
-        files: ['posts/**/*', 'drafts/**/*'],
+        files: ['posts/**/*', 'drafts/**/*', 'authors/**/*'],
         tasks: ['includes', 'replace:dev']
       }
     },

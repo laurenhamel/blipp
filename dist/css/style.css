@@ -651,11 +651,14 @@ body {
   margin: 0;
   font-family: "Open Sans", sans-serif;
   font-size: 14px;
+  line-height: 1.5;
   color: #222222;
 }
 
 a {
   text-decoration: none;
+  color: #808080;
+  display: inline-block;
 }
 
 a, button, input[type="button"], input[type="submit"], input[type="reset"] {
@@ -675,7 +678,7 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
   background: transparent;
   border: 1px solid #333333;
   color: #333333;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   height: 50px;
@@ -687,6 +690,91 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 .button:hover, .button:focus {
   background-color: #333333;
   color: #FFFFFF;
+}
+
+.tag {
+  padding: 5px 10px;
+  border-radius: 3px;
+  background-color: #CDD7D6;
+  color: #222222;
+  cursor: pointer;
+  transition: all .25s ease-in-out;
+}
+.tag + .tag {
+  margin-left: 5px;
+}
+.tag a {
+  color: inherit !important;
+}
+
+/**
+ * Author pages contain some information
+ * about the author and a feed of their
+ * authored posts.
+ */
+.author {
+  /**
+   * About Section
+   */
+  /**
+   * Name
+   */
+  /**
+   * Job
+   */
+  /**
+   * Biography
+   */
+  /**
+   * Portrait Image Container
+   */
+  /**
+   * Posts Container
+   */
+}
+.author .about {
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.author .name {
+  font-size: 2.5em;
+  font-weight: bold;
+  font-style: normal;
+  margin: 0;
+}
+.author .job {
+  font-family: "Open Sans Condensed", sans-serif;
+  font-size: 1.5em;
+  font-style: normal;
+  font-weight: normal;
+}
+.author .bio {
+  width: 100%;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.author .portrait {
+  width: 150px;
+  height: 150px;
+  margin: 25px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  /**
+   * Portrait Image
+   */
+}
+.author .portrait .image {
+  width: 100%;
+  height: 100%;
+}
+.author .posts {
+  padding: 25px;
+  border-top: 1px solid #9999A1;
 }
 
 /**
@@ -717,7 +805,7 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
    * Tags
    */
   /**
-   * More Button
+   * Read More Button
    */
   /**
    * Category Color Coding
@@ -742,6 +830,7 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 .snippet .feature {
   width: 100%;
   height: 300px;
+  border-bottom: 5px solid #222222;
   /**
    * Feature Image
    */
@@ -812,20 +901,14 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
   font-size: .9em;
   margin-top: 15px;
 }
-.snippet .tags li {
-  padding: 5px 10px;
-  border-radius: 3px;
-  background-color: #CDD7D6;
-  color: #222222;
-  cursor: pointer;
-}
-.snippet .tags li + li {
-  margin-left: 5px;
-}
 .snippet .more {
   margin-top: 25px;
+  color: inherit !important;
 }
 .snippet.category-web-development {
+  /**
+   * Links
+   */
   /**
    * Feature Container
    */
@@ -835,9 +918,15 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
   /**
    * More Button
    */
+  /**
+   * Tags
+   */
+}
+.snippet.category-web-development a {
+  color: #C3D350;
 }
 .snippet.category-web-development .feature {
-  border-bottom: 5px solid #C3D350;
+  border-bottom-color: #C3D350;
 }
 .snippet.category-web-development .category {
   background-color: #C3D350;
@@ -846,9 +935,16 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 .snippet.category-web-development .more:hover, .snippet.category-web-development .more:focus {
   border-color: #C3D350;
   background-color: #C3D350;
+  color: #222222 !important;
+}
+.snippet.category-web-development .tag:hover, .snippet.category-web-development .tag:focus {
+  background-color: #C3D350;
   color: #222222;
 }
 .snippet.category-web-design {
+  /**
+   * Links
+   */
   /**
    * Feature Container
    */
@@ -858,9 +954,15 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
   /**
    * More Button
    */
+  /**
+   * Tags
+   */
+}
+.snippet.category-web-design a {
+  color: #005377;
 }
 .snippet.category-web-design .feature {
-  border-bottom: 5px solid #005377;
+  border-bottom-color: #005377;
 }
 .snippet.category-web-design .category {
   background-color: #005377;
@@ -869,9 +971,16 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 .snippet.category-web-design .more:hover, .snippet.category-web-design .more:focus {
   border-color: #005377;
   background-color: #005377;
+  color: #FFFFFF !important;
+}
+.snippet.category-web-design .tag:hover, .snippet.category-web-design .tag:focus {
+  background-color: #005377;
   color: #FFFFFF;
 }
 .snippet.category-graphic-design {
+  /**
+   * Links
+   */
   /**
    * Feature Container
    */
@@ -881,9 +990,15 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
   /**
    * More Button
    */
+  /**
+   * Tags
+   */
+}
+.snippet.category-graphic-design a {
+  color: #F87060;
 }
 .snippet.category-graphic-design .feature {
-  border-bottom: 5px solid #F87060;
+  border-bottom-color: #F87060;
 }
 .snippet.category-graphic-design .category {
   background-color: #F87060;
@@ -892,9 +1007,16 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 .snippet.category-graphic-design .more:hover, .snippet.category-graphic-design .more:focus {
   border-color: #F87060;
   background-color: #F87060;
+  color: #222222 !important;
+}
+.snippet.category-graphic-design .tag:hover, .snippet.category-graphic-design .tag:focus {
+  background-color: #F87060;
   color: #222222;
 }
 .snippet.category-marketing {
+  /**
+   * Links
+   */
   /**
    * Feature Container
    */
@@ -904,9 +1026,15 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
   /**
    * More Button
    */
+  /**
+   * Tags
+   */
+}
+.snippet.category-marketing a {
+  color: #542344;
 }
 .snippet.category-marketing .feature {
-  border-bottom: 5px solid #542344;
+  border-bottom-color: #542344;
 }
 .snippet.category-marketing .category {
   background-color: #542344;
@@ -914,6 +1042,339 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 }
 .snippet.category-marketing .more:hover, .snippet.category-marketing .more:focus {
   border-color: #542344;
+  background-color: #542344;
+  color: #FFFFFF !important;
+}
+.snippet.category-marketing .tag:hover, .snippet.category-marketing .tag:focus {
+  background-color: #542344;
+  color: #FFFFFF;
+}
+
+/**
+ * Each post has its own separate page,
+ * but all posts sitewide across categories
+ * and tags will hold the same appearance.
+ * The content of a post is controlled by
+ * the post's markdown file, but the layout
+ * and design of metadata objects are slightly
+ * more flexible.
+ */
+.post {
+  /**
+   * Feature Image Container
+   */
+  /**
+   * Category Label
+   */
+  /**
+   * Content Container
+   */
+  /**
+   * Heading
+   */
+  /**
+   * Author & Date
+   */
+  /**
+   * Author
+   */
+  /**
+   * Date
+   */
+  /**
+   * Description
+   */
+  /**
+   * Body
+   */
+  /**
+   * Tags
+   */
+  /**
+   * Category Color Coding
+   *
+   * Enable color coding on categories by
+   * setting the boolean value inside the 
+   * @if conditional to TRUE. Otherwise,
+   * use FALSE to quickly disable color coding.
+   *
+   * Alternatively, use the people example 
+   * to help build your own visual categorization
+   * styles.
+   */
+}
+.post .feature {
+  height: 400px;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 5px solid #222222;
+  /**
+   * Feature Image
+   */
+}
+.post .feature.x-center {
+  justify-content: center;
+}
+.post .feature.x-left {
+  justify-content: flex-start;
+}
+.post .feature.x-right {
+  justify-content: flex-end;
+}
+.post .feature.y-center {
+  align-items: center;
+}
+.post .feature.y-top {
+  align-items: flex-start;
+}
+.post .feature.y-bottom {
+  align-items: flex-end;
+}
+.post .feature .image {
+  width: 100%;
+  min-height: 100%;
+}
+.post .feature .image.x-contain {
+  width: 100%;
+  min-width: auto;
+}
+.post .feature .image.x-cover {
+  width: auto;
+  min-width: 100%;
+}
+.post .feature .image.y-contain {
+  height: 100%;
+  min-height: auto;
+}
+.post .feature .image.y-cover {
+  height: auto;
+  min-height: 100%;
+}
+.post .category {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+  text-transform: uppercase;
+  font-family: "Open Sans Condensed", sans-serif;
+  font-size: 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 25px;
+  padding-right: 25px;
+  height: 50px;
+  transition: all .25s ease-in-out;
+  box-shadow: 2px 3px 5px rgba(34, 34, 34, 0.2);
+  background-color: #222222;
+  color: #FFFFFF;
+}
+.post .category:hover, .post .category:focus {
+  transform: translatey(-2px);
+}
+.post .content {
+  padding: 25px;
+}
+.post .content img,
+.post .content video,
+.post .content audio,
+.post .content iframe,
+.post .content object {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto;
+}
+.post .content img[class*=" float-"]::after, .post .content img[class^="float-"]::after,
+.post .content video[class*=" float-"]::after,
+.post .content video[class^="float-"]::after,
+.post .content audio[class*=" float-"]::after,
+.post .content audio[class^="float-"]::after,
+.post .content iframe[class*=" float-"]::after,
+.post .content iframe[class^="float-"]::after,
+.post .content object[class*=" float-"]::after,
+.post .content object[class^="float-"]::after {
+  content: "";
+  clear: both;
+}
+@media (min-width: 851px) {
+  .post .content img.float-left,
+  .post .content video.float-left,
+  .post .content audio.float-left,
+  .post .content iframe.float-left,
+  .post .content object.float-left {
+    float: left;
+    margin-left: 0;
+    max-width: 50%;
+    margin-right: 25px;
+  }
+}
+@media (min-width: 851px) {
+  .post .content img.float-right,
+  .post .content video.float-right,
+  .post .content audio.float-right,
+  .post .content iframe.float-right,
+  .post .content object.float-right {
+    float: right;
+    margin-right: 0;
+    max-width: 50%;
+    margin-left: 25px;
+  }
+}
+.post .heading {
+  font-size: 2.5em;
+  font-weight: bold;
+  font-style: normal;
+  margin-top: 0;
+  margin-bottom: .5em;
+}
+.post .author, .post .date {
+  color: #95A3B3;
+  font-size: .95em;
+}
+.post .author ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: inline;
+}
+.post .author ul li {
+  display: inline;
+}
+.post .author ul li + li::before {
+  content: ', ';
+}
+.post .description {
+  margin-top: .5em;
+  margin-bottom: 1em;
+  font-size: 1.5em;
+  font-family: "Open Sans Condensed", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+}
+.post .body {
+  margin-top: 50px;
+}
+.post .tags {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  font-family: "Open Sans Condensed", sans-serif;
+  font-size: .9em;
+  margin-top: 25px;
+}
+.post.category-web-development {
+  /**
+   * Links
+   */
+  /**
+   * Feature Container
+   */
+  /**
+   * Category Label
+   */
+  /**
+   * Tags
+   */
+}
+.post.category-web-development a {
+  color: #C3D350;
+}
+.post.category-web-development .feature {
+  border-bottom-color: #C3D350;
+}
+.post.category-web-development .category {
+  background-color: #C3D350;
+  color: #222222;
+}
+.post.category-web-development .tag:hover, .post.category-web-development .tag:focus {
+  background-color: #C3D350;
+  color: #222222;
+}
+.post.category-web-design {
+  /**
+   * Links
+   */
+  /**
+   * Feature Container
+   */
+  /**
+   * Category Label
+   */
+  /**
+   * Tags
+   */
+}
+.post.category-web-design a {
+  color: #005377;
+}
+.post.category-web-design .feature {
+  border-bottom-color: #005377;
+}
+.post.category-web-design .category {
+  background-color: #005377;
+  color: #FFFFFF;
+}
+.post.category-web-design .tag:hover, .post.category-web-design .tag:focus {
+  background-color: #005377;
+  color: #FFFFFF;
+}
+.post.category-graphic-design {
+  /**
+   * Links
+   */
+  /**
+   * Feature Container
+   */
+  /**
+   * Category Label
+   */
+  /**
+   * Tags
+   */
+}
+.post.category-graphic-design a {
+  color: #F87060;
+}
+.post.category-graphic-design .feature {
+  border-bottom-color: #F87060;
+}
+.post.category-graphic-design .category {
+  background-color: #F87060;
+  color: #222222;
+}
+.post.category-graphic-design .tag:hover, .post.category-graphic-design .tag:focus {
+  background-color: #F87060;
+  color: #222222;
+}
+.post.category-marketing {
+  /**
+   * Links
+   */
+  /**
+   * Feature Container
+   */
+  /**
+   * Category Label
+   */
+  /**
+   * Tags
+   */
+}
+.post.category-marketing a {
+  color: #542344;
+}
+.post.category-marketing .feature {
+  border-bottom-color: #542344;
+}
+.post.category-marketing .category {
+  background-color: #542344;
+  color: #FFFFFF;
+}
+.post.category-marketing .tag:hover, .post.category-marketing .tag:focus {
   background-color: #542344;
   color: #FFFFFF;
 }

@@ -1,0 +1,16 @@
+.tag {
+  
+  $background: color('grey', 'light');
+      
+    padding: 5px 10px;
+    border-radius: 3px;
+    background-color: $background;
+    color: color-contrast($background);
+    cursor: pointer;
+    transition: all .25s ease-in-out;
+    
+    + .tag { margin-left: 5px; }
+    
+    a { color: inherit !important; }
+  
+}
