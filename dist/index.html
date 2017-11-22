@@ -92,7 +92,7 @@
         By 
         <ul v-if="post.meta.author instanceof Array">
           <li v-for="author in post.meta.author">
-            <router-link :to="'/author/' + $options.filters.id(author)">
+            <router-link tag="a" :to="'/author/' + $options.filters.id(author)">
               {{author}}
             </router-link>
           </li>
@@ -118,7 +118,7 @@
 </template>
 
 <template id="category">
-  <div class="category">
+  <div class="feed category">
       
     <snippet v-for="post in posts" 
              :post="post" 
@@ -128,7 +128,7 @@
 </template>
 
 <template id="tag">
-  <div class="tag">
+  <div class="feed tag">
       
     <snippet v-for="post in posts" 
              :post="post" 
@@ -148,7 +148,25 @@
     
       <h1 class="name">{{about.meta.name}}</h1>
       
-      <div class="job">{{about.meta.title}} at {{about.meta.employer}}</div>
+      <div class="title">{{about.meta.title}}</div>
+      
+      <ul class="social">
+        <li v-if="about.meta.website">
+          <a class="fa-globe"
+             :href="about.meta.website"
+             target="_blank"></a>
+        </li>
+        <li v-if="about.meta.email">
+          <a class="fa-envelope"
+             :href="'mailto:' + about.meta.email"></a>
+        </li>
+        <li v-for="social in socials" 
+            v-if="about.meta[social] && about.meta[social].link === true">
+          <a :class="'soci-' + social"
+             :href="socialURL(social, about.meta[social])"
+             :target="social == 'skype' ? '' : '_blank'"></a>
+        </li>
+      </ul>
       
       <div class="bio" v-if="about.html != ''" v-html="about.html"></div>
       

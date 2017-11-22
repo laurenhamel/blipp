@@ -8,6 +8,7 @@
  * more flexible.
  */
 .post {
+  padding: 25px;
   
   $default: color('black');
   
@@ -98,7 +99,7 @@
         @include breakpoint( screen('large') ) {
           float: left;
           margin-left: 0;
-          max-width: 50%;
+          max-width: 66%;
           margin-right: 25px;
         }
       }
@@ -107,7 +108,7 @@
         @include breakpoint( screen('large') ) {
           float: right;
           margin-right: 0;
-          max-width: 50%;
+          max-width: 66%;
           margin-left: 25px;
         }
       }
@@ -130,7 +131,11 @@
   /**
    * Author & Date
    */
-  .author, .date { color: color('slate'); font-size: .95em; }
+  .author, 
+  .date { 
+    color: color('slate'); 
+    font-size: .95em; 
+  }
   
   /**
    * Author
@@ -174,7 +179,9 @@
   /**
    * Body
    */
-  .body { margin-top: 50px; }
+  .body {
+    margin-top: 50px; 
+  }
   
   /**
    * Tags
@@ -189,6 +196,9 @@
     font-family: font('caption');
     font-size: .9em;
     margin-top: 25px;
+    
+    a { transition: none; }
+    
   }
   
   /**
@@ -212,7 +222,15 @@
         /**
          * Links
          */
-        a { color: $color; }
+        a { 
+          
+          $hover: shade($color, 25%);
+          
+          color: $color; 
+          
+          &:hover, &:focus { color: $hover; }
+        
+        }
 
         /**
          * Feature Container

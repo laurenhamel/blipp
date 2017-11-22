@@ -15,9 +15,20 @@ body {
 }
 
 a { 
+  
+  $normal: color('grey', 'dark');
+  $hover: shade($normal, 25%);
+  
   text-decoration: none;
-  color: color('grey', 'dark');
+  color: $normal;
   display: inline-block;
+  transition: all .25s ease-in-out;
+  
+  &:hover,
+  &:focus {
+    color: $hover;
+  }
+  
 }
 
 a, #{$all-buttons} {

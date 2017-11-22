@@ -14,7 +14,8 @@ class Markdown {
     ],
     'icon'   => [
       'fontawesome' => 'fa',
-      'ionicons'    => 'ion'
+      'ionicons'    => 'ion',
+      'socicon'     => 'soci'
     ],
     'video' => [
       'youtube'     => '//www.youtube.com/embed/:id',
@@ -128,6 +129,13 @@ class Markdown {
     elseif( is_numeric($string) ) {
       
       $string = (float) $string;
+      
+    }
+    
+    // Boolean types
+    elseif( $string == 'true' or $string == 'false' ) {
+      
+      $string = $string == 'true' ? true : false;
       
     }
  

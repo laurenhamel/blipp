@@ -1,11 +1,18 @@
 ---
 name: Lauren Hamel
-
 title: Web Developer
-employer: Emory University
+email: lauren.hamel@outlook.com
+website: //laurenhamel.me
 
-linkedin: { username: laurenhamel }
-facebook: { id: 641861312, username: lauren.hamel }
+linkedin: { link: true, username: laurenhamel }
+facebook: { link: false, id: 641861312, username: lauren.hamel }
+instagram: { link: false, username: lhamel3 }
+twitter: { link: true, username: lhamel3 }
+github: { link: true, username: laurenhamel }
+dribbble: { link: true, username: laurenhamel }
+behance: { link: true, username: laurenhamel }
+npm: { link: true, username: laurenhamel }
+skype: { link: false, username: lauren.r.hamel }
 
 ---
 

@@ -78,8 +78,6 @@
     transform: translatey(-100%); 
   }
   
-  
-  
   /**
    * Category Label
    */
@@ -121,7 +119,10 @@
     justify-content: flex-start;
     font-family: font('caption');
     font-size: .9em;
-    margin-top: 15px;
+    margin-top: 25px;
+    
+    a { transition: none; }
+    
   }
   
   /**
@@ -153,7 +154,15 @@
         /**
          * Links
          */
-        a { color: $color; }
+        a { 
+          
+          $hover: shade($color, 25%);
+          
+          color: $color; 
+          
+          &:hover, &:focus { color: $hover; }
+        
+        }
 
         /**
          * Feature Container

@@ -253,8 +253,8 @@ module.exports = function(grunt){
       },
       assets: {
         files: [
-          { expand: true, cwd: 'src/images/', src: ['**'], dest: 'dist/images/' },
-          { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'dist/fonts/' }
+          { expand: true, cwd: 'src/images/', src: ['**'], dest: 'dist/images' },
+          { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'dist/fonts' }
         ]
       }
     },

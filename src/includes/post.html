@@ -19,7 +19,7 @@
       By 
       <ul v-if="post.meta.author instanceof Array">
         <li v-for="author in post.meta.author">
-          <router-link :to="'/author/' + $options.filters.id(author)">
+          <router-link tag="a" :to="'/author/' + $options.filters.id(author)">
             {{author}}
           </router-link>
         </li>

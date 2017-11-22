@@ -7,7 +7,63 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // Constants
-var API_PATH = '/markdown-blog/api/';
+var API_SRC = '/markdown-blog/api/';
+var SOCIAL_PROFILE_SRC = {
+  '500px': '//500px.com/:username',
+  linkedin: '//linkedin.com/in/:username',
+  facebook: '//facebook.com/:username',
+  github: '//github.com/:username',
+  instagram: '//instagram.com/:username',
+  twitter: '//twitter.com/@:username',
+  behance: '//behance.com/:username',
+  dribbble: '//dribbble.com/:username',
+  pinterest: '//pinterest.com/:username',
+  tumblr: '//:username.tumblr.com',
+  myspace: '//myspace.com/:username',
+  'google+': '//plus.google.com/:username:id',
+  soundcloud: '//soundcloud.com/:username',
+  blogger: '//:username.blogspot.com',
+  coderwall: '//coderwall.com/:username',
+  stackoverflow: '//stackoverflow.com/users/:id/:username',
+  stackexchange: '//:category.stackexchange.com/users/:id/:username',
+  masterbranch: '//masterbranch.com/d/:username',
+  reddit: '//reddit.com/user/:username',
+  livejournal: '//:username.livejournal.com',
+  skype: 'skype::username',
+  flickr: '//flickr.com/photos/:username',
+  foursquare: '//foursquare.com/:username',
+  mixcloud: '//mixcloud.com/:username',
+  etsy: '//etsy.com/people/:username',
+  '8tracks': '//8tracks.com/:username',
+  npm: '//npmjs.com/~:username',
+  patreon: '//patreon.com/:username',
+  quora: '//quora.com/profile/:username',
+  researchgate: '//researchgate.net/profile/:username',
+  reverbnation: '//reverbnation.com/:username',
+  slideshare: '//slideshare.net/:username',
+  vimeo: '//vimeo.com/:username',
+  youtube: {
+    channel: '//youtube.com/channel/:username:id',
+    user: '//youtube.com/[:username, :id]'
+  },
+  vine: '//vine.co/:username',
+  yelp: '//yelp.com/user_details?userid=:id',
+  zerply: '//zerply.com/:username',
+  trello: '//trello.com/:username',
+  sketchfab: '//sketchfab.com/:username',
+  bitbucket: '//bitbucket.org/:username',
+  fundable: '//fundable.com/:username',
+  gofundme: {
+    profile: '//gofundme.com/profile/:username',
+    fund: '//gofundme.com/:fund'
+  },
+  slack: '//:team.slack.com/',
+  unsplash: '//unsplace.com/@:username',
+  codepen: '//codepen.io/:username',
+  instructables: '//instructables.com/member/:username',
+  gitlab: '//gitlab.com/:username'
+};
+var SOCIAL_SHARE_SRC = {};
 
 // Classes
 
@@ -16,7 +72,7 @@ var API = function () {
     _classCallCheck(this, API);
 
     this.params = $.extend({}, options);
-    this.src = API_PATH;
+    this.src = API_SRC;
   }
 
   // Posts
@@ -134,7 +190,40 @@ var filters = {
     return date.isValid() ? date.format(format) : value;
   }
 };
-var methods = {};
+var methods = {
+  socialURL: function socialURL(media) {
+    var credentials = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+    // Interpret media.
+    media = media.split('.');
+
+    // Initialize source.
+    var src = SOCIAL_PROFILE_SRC;
+
+    // Get source.
+    media.forEach(function (key) {
+      return src = src[key];
+    });
+
+    // Exit if no source.
+    if (!src) return;
+
+    // Parse source.
+    for (var key in credentials) {
+
+      var value = credentials[key];
+
+      if (src.indexOf(':' + key) > -1) src = src.replace(':' + key, value);
+    }
+
+    // Remove remaining.
+    src = src.replace(/:[a-z0-9_-]+(?=:|\/|\.|)/g, '');
+
+    // Return the source.
+    return src;
+  }
+};
 
 // Feed
 var Feed = Vue.component('feed', {
@@ -373,7 +462,7 @@ var Category = Vue.component('category', {
     });
 
     // Get posts by Category.
-    api.getPostsByCategory(to.$route.params.category).then(function (response) {
+    api.getPostsByCategory(to.params.category).then(function (response) {
 
       self.posts = response.data;
 
@@ -473,7 +562,7 @@ var Tag = Vue.component('tag', {
     });
 
     // Get posts by Category.
-    api.getPostsByTag(to.$route.params.tag).then(function (response) {
+    api.getPostsByTag(to.params.tag).then(function (response) {
 
       self.posts = response.data;
 
@@ -500,19 +589,7 @@ var Author = Vue.component('author', {
       photo: null,
       about: {
         config: {},
-        meta: {
-          facebook: {},
-          linkedin: {},
-          instagram: {},
-          youtube: {},
-          twitter: {},
-          github: {},
-          behance: {},
-          dribbble: {},
-          pinterest: {},
-          snapchat: {},
-          'google+': {}
-        },
+        meta: {},
         html: null,
         markdown: null,
         frontmatter: null,
@@ -523,7 +600,8 @@ var Author = Vue.component('author', {
       posts: [],
       next: {},
       more: false,
-      loading: false
+      loading: false,
+      socials: Object.keys(SOCIAL_PROFILE_SRC)
     };
   },
 
@@ -565,6 +643,8 @@ var Author = Vue.component('author', {
 
       var self = this,
           id;
+
+      if (!self.about.meta.facebook) return;
 
       if (id = self.about.meta.facebook.id) {
 

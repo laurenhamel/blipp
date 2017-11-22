@@ -1,11 +1,11 @@
 ---
 name: Cydney Goodwin
+title: Wellness Advocate
+email: cydney.goodwin@outlook.com
+website: //cydneyhamel.com
 
-title: Exercise Physiologist
-employer: Something or Other
-
-linkedin: { username: cydneygoodwin }
-facebook: { id: 858265243, username: cydney.goodwin }
+linkedin: { link: true, username: cydneygoodwin }
+facebook: { link: false, id: 858265243, username: cydney.goodwin }
 
 ---
 
