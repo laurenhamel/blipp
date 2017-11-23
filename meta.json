@@ -9,6 +9,7 @@
   "prefix": {
     "category": "~",
     "tag": "#",
-    "author": "@"
+    "author": "@",
+    "post": ""
   }
 }

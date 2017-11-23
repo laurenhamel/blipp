@@ -442,7 +442,7 @@ var Post = Vue.component('post', {
       self.post = response.data;
 
       // Set title.
-      self.setTitle(BLOG_META.title + ' | ' + self.post.meta.title);
+      self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.post + self.post.meta.title);
     });
   },
   beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
@@ -456,7 +456,7 @@ var Post = Vue.component('post', {
       self.post = response.data;
 
       // Set title.
-      self.setTitle(BLOG_META.title + ' | ' + self.post.meta.title);
+      self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.post + self.post.meta.title);
 
       next();
     });
