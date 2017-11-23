@@ -421,7 +421,10 @@ let Post = Vue.component('post', {
       self.post = response.data;
       
       // Set title.
-      self.setTitle( BLOG_META.title + ' | ' + self.post.meta.title );
+      self.setTitle( 
+        BLOG_META.title + ' | ' + BLOG_META.prefix.post +
+        self.post.meta.title 
+      );
       
     });
     
@@ -438,7 +441,10 @@ let Post = Vue.component('post', {
       self.post = response.data;
       
       // Set title.
-      self.setTitle( BLOG_META.title + ' | ' + self.post.meta.title );
+      self.setTitle( 
+        BLOG_META.title + ' | ' + BLOG_META.prefix.post +
+        self.post.meta.title
+      );
       
       next();
       
