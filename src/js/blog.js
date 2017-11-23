@@ -517,7 +517,10 @@ let Category = Vue.component('category', {
         });
     
     // Set title.
-    self.setTitle( BLOG_META.title + ' | ~' + self.$route.params.category );
+    self.setTitle( 
+      BLOG_META.title + ' | ' + BLOG_META.prefix.tag + 
+      self.$route.params.category 
+    );
     
     // Get posts by category.
     api.getPostsByCategory( self.$route.params.category ).then((response) => {
@@ -545,7 +548,10 @@ let Category = Vue.component('category', {
         });
     
     // Set title.
-    self.setTitle( BLOG_META.title + ' | ~' + to.params.category );
+    self.setTitle( 
+      BLOG_META.title + ' | ' + BLOG_META.prefix.tag +
+      to.params.category 
+    );
     
     // Get posts by Category.
     api.getPostsByCategory( to.params.category ).then((response) => {
@@ -636,7 +642,10 @@ let Tag = Vue.component('tag', {
         });
     
     // Set title.
-    self.setTitle( BLOG_META.title + ' | #' + self.$route.params.tag );
+    self.setTitle( 
+      BLOG_META.title + ' | ' + BLOG_META.prefix.tag +
+      self.$route.params.tag 
+    );
     
     // Get posts by category.
     api.getPostsByTag( self.$route.params.tag ).then((response) => {
@@ -664,7 +673,10 @@ let Tag = Vue.component('tag', {
         });
     
     // Set title.
-    self.setTitle( BLOG_META.title + ' | #' + to.params.tag );
+    self.setTitle( 
+      BLOG_META.title + ' | ' + BLOG_META.prefix.tag + 
+      to.params.tag 
+    );
     
     // Get posts by Category.
     api.getPostsByTag( to.params.tag ).then((response) => {
@@ -786,7 +798,10 @@ let Author = Vue.component('author', {
         });
     
     // Set title.
-    self.setTitle( BLOG_META.title + ' | @' + self.$route.params.author );
+    self.setTitle( 
+      BLOG_META.title + ' | ' + BLOG_META.prefix.author + 
+      self.$route.params.author 
+    );
     
     // Get information about author.
     api.getAuthorByName( self.$route.params.author ).then((response) => {
@@ -822,7 +837,10 @@ let Author = Vue.component('author', {
         deferreds = [];
     
     // Set title.
-    self.setTitle( BLOG_META.title + ' | @' + to.params.author );
+    self.setTitle(
+      BLOG_META.title + ' | ' + BLOG_META.prefix.author +
+      to.params.author 
+    );
     
     // Get information about author.
     deferreds.push(

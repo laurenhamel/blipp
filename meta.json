@@ -5,5 +5,10 @@
   ],
   "contributors": [
     "Cydney Goodwin"
-  ]
+  ],
+  "prefix": {
+    "category": "~",
+    "tag": "#",
+    "author": "@"
+  }
 }
