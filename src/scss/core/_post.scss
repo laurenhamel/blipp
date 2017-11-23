@@ -135,6 +135,7 @@
   .date { 
     color: color('slate'); 
     font-size: .95em; 
+    @include margin-y(1em);
   }
   
   /**
@@ -198,6 +199,24 @@
     margin-top: 25px;
     
     a { transition: none; }
+    
+  }
+  
+  /**
+   * Share
+   */
+  .share {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    margin-top: 25px;
+    
+    li {
+      display: inline-block;
+      
+      + li { margin-left: 10px; }
+      
+    }
     
   }
   

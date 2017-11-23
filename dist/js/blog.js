@@ -7,7 +7,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // Constants
-var API_SRC = '/markdown-blog/api/';
+var API_SRC = '/markdown-blog/api';
 var SOCIAL_PROFILE_SRC = {
   '500px': '//500px.com/:username',
   linkedin: '//linkedin.com/in/:username',
@@ -20,7 +20,7 @@ var SOCIAL_PROFILE_SRC = {
   pinterest: '//pinterest.com/:username',
   tumblr: '//:username.tumblr.com',
   myspace: '//myspace.com/:username',
-  'google+': '//plus.google.com/:username:id',
+  google: '//plus.google.com/:username:id',
   soundcloud: '//soundcloud.com/:username',
   blogger: '//:username.blogspot.com',
   coderwall: '//coderwall.com/:username',
@@ -63,7 +63,27 @@ var SOCIAL_PROFILE_SRC = {
   instructables: '//instructables.com/member/:username',
   gitlab: '//gitlab.com/:username'
 };
-var SOCIAL_SHARE_SRC = {};
+var SOCIAL_SHARE_SRC = {
+  email: 'mailto:?subject=:title&body=:description Read more at :url.',
+  facebook: '//facebook.com/sharer/sharer.php?u=:url&quote=:description',
+  twitter: '//twitter.com/intent/tweet?&text=:description&url=:url',
+  linkedin: '//linkedin.com/shareArticle?url=:url&title=:title&summary=:description',
+  pinterest: '//pinterest.com/pin/create/bookmarklet?media=:feature&url=:url&description=:description',
+  pocket: '//getpocket.com/save?title=:title&url=:url',
+  reddit: '//reddit.com/submit?url=:url&title=:title',
+  tumblr: '//tumblr.com/widgets/share/tool?canonicalUrl=:url&posttyle=link&title=:title&caption=:description',
+  google: '//plus.google.com/share?url=:url',
+  buffer: '//buffer.com/add?text=:description&url=:url',
+  stumpleupon: '//stumbleupon.com/submit?url=:url&title=:title',
+  blogger: '//blogger.com/blog-this.g?u=:url&n=:title&t=:description',
+  livejournal: '//livejournal.com/update.bml?subject=:title&event=:url',
+  myspace: '//myspace.com/post?u=:url&t=:title&c=:description',
+  evernote: '//evernote.com/clip.action?url=:url',
+  flipboard: '//share.flipboard.com/bookmarklet/popout?v=2&title=:title&url:url',
+  instapaper: '//instapaper.com/edit?url=:url&title=:title&description=:description',
+  skype: '//web.skype.com/share?url=:url',
+  digg: '//digg.com/submit?url=:url&title=:title'
+};
 
 // Classes
 
@@ -214,8 +234,49 @@ var methods = {
 
       var value = credentials[key];
 
-      if (src.indexOf(':' + key) > -1) src = src.replace(':' + key, value);
+      if (src.indexOf(':' + key) > -1) {
+
+        src = src.replace(':' + key, value);
+      }
     }
+
+    // Remove remaining.
+    src = src.replace(/:[a-z0-9_-]+(?=:|\/|\.|)/g, '');
+
+    // Return the source.
+    return src;
+  },
+  shareURL: function shareURL(media) {
+    var credentials = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+    // Interpret media.
+    media = media.split('.');
+
+    // Initialize source.
+    var src = SOCIAL_SHARE_SRC;
+
+    // Get source.
+    media.forEach(function (key) {
+      return src = src[key];
+    });
+
+    // Exit if no source.
+    if (!src) return;
+
+    // Parse source.
+    for (var key in credentials) {
+
+      var value = credentials[key];
+
+      if (src.indexOf(':' + key) > -1) {
+
+        src = src.replace(':' + key, encodeURIComponent(value));
+      }
+    }
+
+    // Replace URL.
+    src = src.replace(':url', location.href);
 
     // Remove remaining.
     src = src.replace(/:[a-z0-9_-]+(?=:|\/|\.|)/g, '');
@@ -342,7 +403,8 @@ var Post = Vue.component('post', {
         id: null,
         markdown: null,
         path: null
-      }
+      },
+      share: ['email', 'linkedin', 'facebook', 'twitter', 'google']
     };
   },
 

@@ -13,8 +13,11 @@
   </div>
   
   <div class="content">
+    
     <h1 class="heading">{{post.meta.title}}</h1>
-    <p class="description" v-html="post.meta.description"></p>
+    
+    <div class="description" v-html="post.meta.description"></div >
+    
     <div class="author">
       By 
       <ul v-if="post.meta.author instanceof Array">
@@ -30,8 +33,11 @@
         </router-link>
       </span>
     </div>
-    <p class="date">{{post.meta['date-created'].date | date}}</p>
+    
+    <div class="date">{{post.meta['date-created'].date | date}}</div>
+    
     <div class="body" v-html="post.html"></div>
+    
     <ul class="tags">
       <li v-for="tag in post.meta.tags" class="tag">
         <router-link tag="a" :to="'/tag/' + $options.filters.id(tag)">
@@ -39,6 +45,15 @@
         </router-link>
       </li>
     </ul>
+    
+    <ul class="share">
+      <li v-for="social in share">
+        <a :class="[social == 'email' ? 'fa-share' : 'soci-' + social]"
+           :href="shareURL( social, post.meta )"
+           :target="social == 'email' ? '' : '_blank'"></a>
+      </li>
+    </ul>
+    
   </div>
 
 </article>
