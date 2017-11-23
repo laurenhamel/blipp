@@ -7,6 +7,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // Constants
+var ROOT_PATH = '../';
 var API_SRC = '/markdown-blog/api';
 var SOCIAL_PROFILE_SRC = {
   '500px': '//500px.com/:username',
@@ -84,6 +85,17 @@ var SOCIAL_SHARE_SRC = {
   skype: '//web.skype.com/share?url=:url',
   digg: '//digg.com/submit?url=:url&title=:title'
 };
+
+// Ajax Constants
+var BLOG_META = void 0;
+
+$.ajax({
+  dataType: 'JSON',
+  url: ROOT_PATH + 'meta.json',
+  async: false
+}).done(function (data) {
+  return BLOG_META = data;
+});
 
 // Classes
 
@@ -211,6 +223,9 @@ var filters = {
   }
 };
 var methods = {
+  setTitle: function setTitle(title) {
+    document.title = title;
+  },
   socialURL: function socialURL(media) {
     var credentials = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -349,6 +364,9 @@ var Feed = Vue.component('feed', {
       limit: this.limit
     });
 
+    // Set title.
+    self.setTitle(BLOG_META.title);
+
     // Get posts.
     api.getPosts().then(function (response) {
 
@@ -422,6 +440,9 @@ var Post = Vue.component('post', {
     api.getPostById(self.$route.params.id).then(function (response) {
 
       self.post = response.data;
+
+      // Set title.
+      self.setTitle(BLOG_META.title + ' | ' + self.post.meta.title);
     });
   },
   beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
@@ -433,6 +454,9 @@ var Post = Vue.component('post', {
     api.getPostById(to.params.id).then(function (response) {
 
       self.post = response.data;
+
+      // Set title.
+      self.setTitle(BLOG_META.title + ' | ' + self.post.meta.title);
 
       next();
     });
@@ -502,6 +526,9 @@ var Category = Vue.component('category', {
       order: this.order
     });
 
+    // Set title.
+    self.setTitle(BLOG_META.title + ' | ~' + self.$route.params.category);
+
     // Get posts by category.
     api.getPostsByCategory(self.$route.params.category).then(function (response) {
 
@@ -522,6 +549,9 @@ var Category = Vue.component('category', {
       sort: this.sort,
       order: this.order
     });
+
+    // Set title.
+    self.setTitle(BLOG_META.title + ' | ~' + to.params.category);
 
     // Get posts by Category.
     api.getPostsByCategory(to.params.category).then(function (response) {
@@ -602,6 +632,9 @@ var Tag = Vue.component('tag', {
       order: this.order
     });
 
+    // Set title.
+    self.setTitle(BLOG_META.title + ' | #' + self.$route.params.tag);
+
     // Get posts by category.
     api.getPostsByTag(self.$route.params.tag).then(function (response) {
 
@@ -622,6 +655,9 @@ var Tag = Vue.component('tag', {
       sort: this.sort,
       order: this.order
     });
+
+    // Set title.
+    self.setTitle(BLOG_META.title + ' | #' + to.params.tag);
 
     // Get posts by Category.
     api.getPostsByTag(to.params.tag).then(function (response) {
@@ -731,6 +767,9 @@ var Author = Vue.component('author', {
       order: this.order
     });
 
+    // Set title.
+    self.setTitle(BLOG_META.title + ' | @' + self.$route.params.author);
+
     // Get information about author.
     api.getAuthorByName(self.$route.params.author).then(function (response) {
 
@@ -758,6 +797,9 @@ var Author = Vue.component('author', {
       order: this.order
     }),
         deferreds = [];
+
+    // Set title.
+    self.setTitle(BLOG_META.title + ' | @' + to.params.author);
 
     // Get information about author.
     deferreds.push(api.getAuthorByName(to.params.author).then(function (response) {

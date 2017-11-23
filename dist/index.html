@@ -79,7 +79,7 @@
     <div class="feature">
       <img class="image" :src="post.meta.feature">
       <router-link tag="a" 
-                   :to="'/category/' + post.meta.category"
+                   :to="'/category/' + $options.filters.id(post.meta.category)"
                    class="category">
         {{post.meta.category}}
       </router-link>

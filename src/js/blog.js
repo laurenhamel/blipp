@@ -1,4 +1,5 @@
 // Constants
+const ROOT_PATH = '../';
 const API_SRC = '/markdown-blog/api';
 const SOCIAL_PROFILE_SRC = {
   '500px':            '//500px.com/:username',
@@ -76,6 +77,15 @@ const SOCIAL_SHARE_SRC = {
   skype:        '//web.skype.com/share?url=:url',
   digg:         '//digg.com/submit?url=:url&title=:title'
 };
+
+// Ajax Constants
+let BLOG_META;
+
+$.ajax({
+  dataType: 'JSON',
+  url: ROOT_PATH + 'meta.json',
+  async: false
+}).done(data => BLOG_META = data);
 
 // Classes
 class API {
@@ -177,6 +187,10 @@ const filters = {
   
 };
 const methods = {
+  
+  setTitle( title ) {
+    document.title = title;
+  },
   
   socialURL( media, credentials = {} ) {
     
@@ -321,6 +335,9 @@ let Feed = Vue.component('feed', {
           limit: this.limit
         });
     
+    // Set title.
+    self.setTitle( BLOG_META.title );
+    
     // Get posts.
     api.getPosts().then((response) => {
     
@@ -403,6 +420,9 @@ let Post = Vue.component('post', {
     
       self.post = response.data;
       
+      // Set title.
+      self.setTitle( BLOG_META.title + ' | ' + self.post.meta.title );
+      
     });
     
   },
@@ -416,6 +436,9 @@ let Post = Vue.component('post', {
     api.getPostById( to.params.id ).then((response) => {
       
       self.post = response.data;
+      
+      // Set title.
+      self.setTitle( BLOG_META.title + ' | ' + self.post.meta.title );
       
       next();
       
@@ -493,6 +516,9 @@ let Category = Vue.component('category', {
           order: this.order
         });
     
+    // Set title.
+    self.setTitle( BLOG_META.title + ' | ~' + self.$route.params.category );
+    
     // Get posts by category.
     api.getPostsByCategory( self.$route.params.category ).then((response) => {
       
@@ -517,6 +543,9 @@ let Category = Vue.component('category', {
           sort: this.sort,
           order: this.order
         });
+    
+    // Set title.
+    self.setTitle( BLOG_META.title + ' | ~' + to.params.category );
     
     // Get posts by Category.
     api.getPostsByCategory( to.params.category ).then((response) => {
@@ -606,6 +635,9 @@ let Tag = Vue.component('tag', {
           order: this.order
         });
     
+    // Set title.
+    self.setTitle( BLOG_META.title + ' | #' + self.$route.params.tag );
+    
     // Get posts by category.
     api.getPostsByTag( self.$route.params.tag ).then((response) => {
       
@@ -630,6 +662,9 @@ let Tag = Vue.component('tag', {
           sort: this.sort,
           order: this.order
         });
+    
+    // Set title.
+    self.setTitle( BLOG_META.title + ' | #' + to.params.tag );
     
     // Get posts by Category.
     api.getPostsByTag( to.params.tag ).then((response) => {
@@ -750,6 +785,9 @@ let Author = Vue.component('author', {
           order: this.order
         });
     
+    // Set title.
+    self.setTitle( BLOG_META.title + ' | @' + self.$route.params.author );
+    
     // Get information about author.
     api.getAuthorByName( self.$route.params.author ).then((response) => {
       
@@ -782,6 +820,9 @@ let Author = Vue.component('author', {
           order: this.order
         }),
         deferreds = [];
+    
+    // Set title.
+    self.setTitle( BLOG_META.title + ' | @' + to.params.author );
     
     // Get information about author.
     deferreds.push(
