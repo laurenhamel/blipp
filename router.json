@@ -2,5 +2,6 @@
   "posts": "posts/",
   "drafts": "drafts/",
   "authors": "authors/",
-  "feed": "api/"
+  "feed": "feed/",
+  "api": "api/"
 }

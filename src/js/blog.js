@@ -1,7 +1,21 @@
+// Set root path.
+const ROOT_PATH = '/markdown-blog/';
+
+// Set paths to blog data.
+const META_PATH = 'meta.json';
+const ROUTER_PATH = 'router.json';
+
+// Load JSON data.
+$.when(
+  
+  $.getJSON(ROOT_PATH + META_PATH).then(data => { return data; }),
+  $.getJSON(ROOT_PATH + ROUTER_PATH).then(data => { return data; })
+  
+).done((BLOG_META, BLOG_ROUTER) => {
+
 // Constants
-const ROOT_PATH = '../';
-const API_SRC = '/markdown-blog/api';
-const FEED_PATH = '/feed';
+const API_PATH = ROOT_PATH + BLOG_ROUTER.api;
+const FEED_PATH = ROOT_PATH + BLOG_ROUTER.feed;
 const SOCIAL_PROFILE_SRC = {
   '500px':            '//500px.com/:username',
   linkedin:           '//linkedin.com/in/:username',
@@ -79,21 +93,12 @@ const SOCIAL_SHARE_SRC = {
   digg:         '//digg.com/submit?url=:url&title=:title'
 };
 
-// Ajax Constants
-let BLOG_META;
-
-$.ajax({
-  dataType: 'JSON',
-  url: ROOT_PATH + 'meta.json',
-  async: false
-}).done(data => BLOG_META = data);
-
 // Classes
 class API {
   
   constructor( options ) {
     this.params = $.extend({}, options);
-    this.src = API_SRC;
+    this.src = API_PATH;
   }
   
   // Posts
@@ -959,4 +964,6 @@ let Blog = new Vue({
   
   el: '#blog',
 
+});
+  
 });
