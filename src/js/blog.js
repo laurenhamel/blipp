@@ -1,6 +1,7 @@
 // Constants
 const ROOT_PATH = '../';
 const API_SRC = '/markdown-blog/api';
+const FEED_PATH = '/feed';
 const SOCIAL_PROFILE_SRC = {
   '500px':            '//500px.com/:username',
   linkedin:           '//linkedin.com/in/:username',
@@ -119,6 +120,16 @@ class API {
   getPostById( id ) {
     
     return $.getJSON( this.src + '/posts/id/' + id + '/' );
+    
+  }
+  getPostBySlug( slug ) {
+    
+    return $.getJSON( this.src + '/posts/slug/' + slug + '/' );
+    
+  }
+  getPostsByKeywords( keywords ){ 
+    
+    return $.getJSON( this.src + '/posts/keywords/' + keywords + '/' );
     
   }
   
@@ -929,6 +940,12 @@ let router = new VueRouter({
         limit: 10,
         sort: 'date-created',
         order: 'newest'
+      }
+    },
+    {
+      path: FEED_PATH,
+      redirect: to => { 
+        window.location = API_SRC + to.path;
       }
     }
   ]

@@ -9,6 +9,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // Constants
 var ROOT_PATH = '../';
 var API_SRC = '/markdown-blog/api';
+var FEED_PATH = '/feed';
 var SOCIAL_PROFILE_SRC = {
   '500px': '//500px.com/:username',
   linkedin: '//linkedin.com/in/:username',
@@ -139,6 +140,18 @@ var API = function () {
     value: function getPostById(id) {
 
       return $.getJSON(this.src + '/posts/id/' + id + '/');
+    }
+  }, {
+    key: 'getPostBySlug',
+    value: function getPostBySlug(slug) {
+
+      return $.getJSON(this.src + '/posts/slug/' + slug + '/');
+    }
+  }, {
+    key: 'getPostsByKeywords',
+    value: function getPostsByKeywords(keywords) {
+
+      return $.getJSON(this.src + '/posts/keywords/' + keywords + '/');
     }
 
     // Tags
@@ -863,6 +876,11 @@ var router = new VueRouter({
       limit: 10,
       sort: 'date-created',
       order: 'newest'
+    }
+  }, {
+    path: FEED_PATH,
+    redirect: function redirect(to) {
+      window.location = API_SRC + to.path;
     }
   }]
 

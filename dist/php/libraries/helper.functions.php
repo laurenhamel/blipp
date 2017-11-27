@@ -6,6 +6,15 @@ function filename_id ( $path ) {
   
 }
 
+function slug_id ( $name ) {
+  
+  $find = [ "/[^A-Za-z0-9 ]/", " " ];
+  $replace = [ "", "-" ];
+  
+  return strtolower( str_replace($find, $replace, $name) );
+  
+}
+
 function scandir_deep( $dir ) {
       
   $files = array_filter(scandir($dir), function($file){

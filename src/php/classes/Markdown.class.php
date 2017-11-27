@@ -267,6 +267,7 @@ class Markdown {
       $frontmatter, 
       $this->mustache_methods()
     );
+    $this->slug = slug_id( $this->meta['title'] );
 
   }
   

@@ -2,12 +2,17 @@
 
 interface GET {
   
+  // Feed
+  public function getFeed();
+  
   // Posts
   public function getPosts();
   public function getPostsByCategory( $category );
   public function getPostsByTag( $tag );
   public function getPostsByAuthor( $author );
   public function getPostById( $id );
+  public function getPostBySlug( $slug );
+  public function getPostsByKeywords( array $keywords );
   
   // Categories
   public function getCategories();
@@ -118,16 +123,30 @@ class API implements GET, POST, PUT, DELETE {
         
         switch($endpoint) {
             
+          // Feed
+          case 'feed':
+            
+            return $this->getFeed();
+            
           // Posts
           case 'posts': 
             
             if( $request[0] ) {
               
               switch($request[0]) {
-                case 'id': return $this->getPostById($request[1]);
-                case 'category': return $this->getPostsByCategory($request[1]);
-                case 'tag': return $this->getPostsByTag($request[1]);
-                case 'author': return $this->getPostsByAuthor($request[1]);
+                case 'id': 
+                  return $this->getPostById($request[1]);
+                case 'slug': 
+                  return $this->getPostBySlug($request[1]);
+                case 'category': 
+                  return $this->getPostsByCategory($request[1]);
+                case 'tag': 
+                  return $this->getPostsByTag($request[1]);
+                case 'author': 
+                  return $this->getPostsByAuthor($request[1]);
+                case 'keywords': 
+                  array_shift($request); 
+                  return $this->getPostsByKeywords($request);
               }
               
             }
@@ -249,6 +268,7 @@ class API implements GET, POST, PUT, DELETE {
     if( $limit['limit'] and $limit['offset'] ) {
         
       $result['next'] = [
+        'total'  => $limit['length'],
         'offset'  => $limit['offset'],
         'limit'   => $limit['remaining'] >= $limit['limit'] ? $limit['limit'] : $limit['remaining']
       ];
@@ -259,6 +279,7 @@ class API implements GET, POST, PUT, DELETE {
     if( $offset['offset'] ) {
       
       $result['prev'] = [
+        'total'   => $limit['length'],
         'offset'  => $offset['start'] - $limit['limit'],
         'limit'   => $limit['limit']
       ];
@@ -379,6 +400,38 @@ class API implements GET, POST, PUT, DELETE {
   }
   
   // GET Methods
+  
+  // Feed
+  public function getFeed() {
+    
+    // Get path to posts.
+    $path = API_ROOT.json_decode(API_ROUTER)->posts;
+
+    // Retrieve all posts.
+    $data = array_map(function($post) use ($path){ 
+      return new Markdown( "{$path}{$post}" );
+    }, array_values( 
+      array_filter(
+        scandir( $path ), 
+        function($post) {
+          return strpos($post, '.md') == (strlen($post) - strlen('.md'));
+        }
+      )
+    ));
+    
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Create a feed from the post data.
+    $feed = new Feed( $data );
+    
+    // Return response.
+    return json_encode($feed->getFeed());
+    
+  }
   
   // Posts
   public function getPosts() {
@@ -582,7 +635,7 @@ class API implements GET, POST, PUT, DELETE {
           }
         ),
         function($post) use ($id) {
-          return filename_id($post) == $id;
+          return filename_id($post) == filename_id($id);
         }
       )
     ));
@@ -590,6 +643,96 @@ class API implements GET, POST, PUT, DELETE {
     if( $data ) return $this->response( 200, $data[0] );
     
     return $this->response( 404 );
+    
+  }
+  public function getPostBySlug( $slug ) {
+    
+    // Get path to posts.
+    $path = API_ROOT.json_decode(API_ROUTER)->posts;
+
+    // Retrieve the post with the given slug.
+    $data = array_values(array_filter(
+      array_map(function($post) use ($path){
+        return new Markdown( "{$path}{$post}" );
+      }, array_filter(
+          scandir( $path ), 
+          function($post) {
+            return strpos($post, '.md') == (strlen($post) - strlen('.md'));
+          }
+        )
+      ),
+      function( $post ) use ($slug){
+        return slug_id($post->slug) == slug_id($slug);
+      }
+    ));
+
+    if( $data ) return $this->response( 200, $data[0] );
+    
+    return $this->response( 404 );
+    
+  }
+  public function getPostsByKeywords( array $keywords ) {
+    
+    // Get path to posts.
+    $path = API_ROOT.json_decode(API_ROUTER)->posts;
+    
+    // Clean up keywords.
+    foreach($keywords as $index => $keyword) {
+      
+      // Handle commas separated lists.
+      $keywords[$index] = array_map('strtolower', explode(',', $keyword));
+      
+    }
+    
+    // Retrieve the posts with the given keyword(s).
+    $data = array_filter(
+      array_map(function($post) use ($path){ 
+        return new Markdown( "{$path}{$post}" );
+      }, array_values( 
+        array_filter(
+          array_filter(
+            scandir( $path ), 
+            function($post) {
+              return strpos($post, '.md') == (strlen($post) - strlen('.md'));
+            }
+          )
+        )
+      )),
+      function($post) use ($keywords) { 
+        
+        // Use raw post contents.
+        $contents = strtolower($post->contents);
+        
+        foreach($keywords as $index => $keyword) {
+    
+          $result = [];
+            
+          foreach($keyword as $word) {
+
+            $result[$word] = strpos($contents, $word);
+            
+          }
+
+          if( empty($result) ) return false;
+          elseif ( min($result) > 0 ) return true;
+          else return false;
+          
+        }
+        
+      }
+    );
+  
+    // Pass through data modifier.
+    $result = $this->modify( $data ); 
+    
+    // Extract data.
+    $data = $result['data'];
+    
+    // Preserve other data.
+    unset($result['data']);
+    
+    // Return response.
+    return $this->response( 200, $data, $result );
     
   }
   
