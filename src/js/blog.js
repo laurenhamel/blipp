@@ -963,6 +963,32 @@ let Blog = new Vue({
   router,
   
   el: '#blog',
+  
+  created() {
+    
+    // Configure clipboard.
+    var clipboard = new Clipboard( '.copy' ),
+        flag = (target, signal, delay) => {
+          
+          $(target).addClass(signal);
+          
+          setTimeout(function(){
+            
+            $(target).removeClass(signal);
+            
+          }, delay);
+          
+        };
+    
+    clipboard
+      .on('success', function(event){
+        flag(event.trigger, 'copy-success', 2000);
+      })
+      .on('error', function(event){
+        flag(event.trigger, 'copy-error', 2000);
+      });
+    
+  }
 
 });
   

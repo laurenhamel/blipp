@@ -1,0 +1,24 @@
+.copy {
+  
+  &::after {
+    
+    $background: color('grey', 'light');
+    
+    content: "";
+    top: calc(100% + 5px);
+    left: 5px;
+    position: absolute;
+    display: block;
+    padding: 5px;
+    background-color: $background;
+    color: color-contrast($background);
+    transition: all .25s ease-in-out;
+    opacity: 0;
+    font-family: font('caption');
+    border-radius: 5px;
+  }
+  
+  &.copy-success::after { content: "Copied!"; opacity: 1; }
+  &.copy-error::after { content: "Failed!"; opacity: 1; }
+  
+}

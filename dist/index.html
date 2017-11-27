@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="css/style.css">
-<script src="js/dependencies/jquery.min.js"></script>
+<script src="js/dependencies/clipboard.min.js"></script>
+  <script src="js/dependencies/jquery.min.js"></script>
   <script src="js/dependencies/moment.min.js"></script>
   <script src="js/dependencies/mustache.min.js"></script>
   <script src="js/dependencies/showdown.min.js"></script>
@@ -124,6 +125,10 @@
           <a :class="[social == 'email' ? 'fa-share' : 'soci-' + social]"
              :href="shareURL( social, post.meta )"
              :target="social == 'email' ? '' : '_blank'"></a>
+        </li>
+        <li>
+          <a class="fa-link copy" 
+             :data-clipboard-text="location.href"></a>
         </li>
       </ul>
       

@@ -10643,6 +10643,29 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
   color: inherit !important;
 }
 
+.copy::after {
+  content: "";
+  top: calc(100% + 5px);
+  left: 5px;
+  position: absolute;
+  display: block;
+  padding: 5px;
+  background-color: #CDD7D6;
+  color: #222222;
+  transition: all .25s ease-in-out;
+  opacity: 0;
+  font-family: "Open Sans Condensed", sans-serif;
+  border-radius: 5px;
+}
+.copy.copy-success::after {
+  content: "Copied!";
+  opacity: 1;
+}
+.copy.copy-error::after {
+  content: "Failed!";
+  opacity: 1;
+}
+
 /**
  * The feed is the home page of the 
  * blog. The feed itself is a

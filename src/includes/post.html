@@ -52,6 +52,10 @@
            :href="shareURL( social, post.meta )"
            :target="social == 'email' ? '' : '_blank'"></a>
       </li>
+      <li>
+        <a class="fa-link copy" 
+           :data-clipboard-text="location.href"></a>
+      </li>
     </ul>
     
   </div>
