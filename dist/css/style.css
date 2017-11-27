@@ -11282,7 +11282,7 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 }
 .post.category-web-development {
   /**
-   * Links
+   * Author
    */
   /**
    * Feature Container
@@ -11294,10 +11294,10 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
    * Tags
    */
 }
-.post.category-web-development a {
+.post.category-web-development .author a {
   color: #C3D350;
 }
-.post.category-web-development a:hover, .post.category-web-development a:focus {
+.post.category-web-development .author a:hover, .post.category-web-development .author a:focus {
   color: #929e3c;
 }
 .post.category-web-development .feature {
@@ -11313,7 +11313,7 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 }
 .post.category-web-design {
   /**
-   * Links
+   * Author
    */
   /**
    * Feature Container
@@ -11325,10 +11325,10 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
    * Tags
    */
 }
-.post.category-web-design a {
+.post.category-web-design .author a {
   color: #005377;
 }
-.post.category-web-design a:hover, .post.category-web-design a:focus {
+.post.category-web-design .author a:hover, .post.category-web-design .author a:focus {
   color: #003e59;
 }
 .post.category-web-design .feature {
@@ -11344,7 +11344,7 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 }
 .post.category-graphic-design {
   /**
-   * Links
+   * Author
    */
   /**
    * Feature Container
@@ -11356,10 +11356,10 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
    * Tags
    */
 }
-.post.category-graphic-design a {
+.post.category-graphic-design .author a {
   color: #F87060;
 }
-.post.category-graphic-design a:hover, .post.category-graphic-design a:focus {
+.post.category-graphic-design .author a:hover, .post.category-graphic-design .author a:focus {
   color: #ba5448;
 }
 .post.category-graphic-design .feature {
@@ -11375,7 +11375,7 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
 }
 .post.category-marketing {
   /**
-   * Links
+   * Author
    */
   /**
    * Feature Container
@@ -11387,10 +11387,10 @@ input[type="text"], input[type="color"], input[type="data"], input[type="datetim
    * Tags
    */
 }
-.post.category-marketing a {
+.post.category-marketing .author a {
   color: #542344;
 }
-.post.category-marketing a:hover, .post.category-marketing a:focus {
+.post.category-marketing .author a:hover, .post.category-marketing .author a:focus {
   color: #3f1a33;
 }
 .post.category-marketing .feature {

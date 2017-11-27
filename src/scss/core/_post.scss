@@ -239,16 +239,20 @@
       &.category-#{$category} {
         
         /**
-         * Links
+         * Author
          */
-        a { 
+        .author {
           
-          $hover: shade($color, 25%);
+          a { 
           
-          color: $color; 
+            $hover: shade($color, 25%);
+
+            color: $color; 
+
+            &:hover, &:focus { color: $hover; }
+
+          }
           
-          &:hover, &:focus { color: $hover; }
-        
         }
 
         /**
