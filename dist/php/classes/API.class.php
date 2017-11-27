@@ -37,12 +37,18 @@ class API implements GET, POST, PUT, DELETE {
   private $status = [
     200 => 'OK',
     201 => 'Created',
+    204 => 'No Content',
     304 => 'Not Modified',
     400 => 'Bad Request',
+    401 => 'Unauthorized',
     403 => 'Forbidden',
     404 => 'Not Found',
+    405 => 'Method Not Allowed',
+    406 => 'Not Acceptable',
     409 => 'Conflict',
-    500 => 'Internal Server Error'
+    415 => 'Unsupported Media Type',
+    500 => 'Internal Server Error',
+    501 => 'Not Implemented'
   ];
   
   protected $method = 'GET';
@@ -203,15 +209,21 @@ class API implements GET, POST, PUT, DELETE {
       // POST Requests
       elseif( $method == 'POST' ) {
         
+        $this->reponse( 501 );
+        
       }
       
       // PUT Requests
       elseif( $method == 'PUT' ) {
         
+        $this->reponse( 501 );
+        
       }
       
       // DELETE Requests
       elseif( $method == 'DELETE' ) {
+        
+        $this->reponse( 501 );
         
       }
       
