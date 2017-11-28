@@ -107,6 +107,7 @@ module.exports = function(grunt){
               'dist/js/**/*.js', 
               '!dist/js/**/*.min.js',
               '!dist/js/**/moment.js',
+              '!dist/js/**/vue.js',
               '!dist/js/dependencies/codemirror/*.js',
             ],
             dest: '.', 
