@@ -1,5 +1,7 @@
 <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dependencies/codemirror.css">
 <script src="js/dependencies/clipboard.min.js"></script>
+  <script src="js/dependencies/codemirror.min.js"></script>
   <script src="js/dependencies/jquery.min.js"></script>
   <script src="js/dependencies/moment.min.js"></script>
   <script src="js/dependencies/mustache.min.js"></script>
@@ -16,9 +18,9 @@
 <template id="feed">
   <div class="feed">
       
-    <snippet v-for="post in posts" 
+    <snippet v-for="(post, index) in posts" 
              :post="post" 
-             :key="post"></snippet>
+             :key="index"></snippet>
     
     <div v-if="loading">FETCHING POSTS...</div>
     
@@ -140,9 +142,9 @@
 <template id="category">
   <div class="feed category">
       
-    <snippet v-for="post in posts" 
+    <snippet v-for="(post, index) in posts" 
              :post="post" 
-             :key="post"></snippet>
+             :key="index"></snippet>
     
   </div>
 </template>
@@ -150,9 +152,9 @@
 <template id="tag">
   <div class="feed tag">
       
-    <snippet v-for="post in posts" 
+    <snippet v-for="(post, index) in posts" 
              :post="post" 
-             :key="post"></snippet>
+             :key="index"></snippet>
     
   </div>
 </template>
@@ -207,6 +209,5 @@
   </div>
 </template>
   
-<script src="js/markdown.js"></script>
-  <script src="js/blog.js"></script>
+<script src="js/blog.js"></script>
 <script src="//localhost:35729/livereload.js"></script>

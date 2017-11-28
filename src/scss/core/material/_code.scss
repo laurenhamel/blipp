@@ -1,0 +1,113 @@
+code {
+  
+  $background: rgba(color('grey', 'light'), .4);
+  
+  display: inline-block;
+  background-color: $background;
+  padding: 2.5px 5px;
+  border-radius: 3px;
+  margin-bottom: 2.5px;
+}
+
+pre > code {
+  
+  display: block;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  
+  .CodeMirror { 
+    
+    $block-background: color('black');
+    $block-foreground: color-contrast($block-background);
+    $block-radius: 5px;
+  
+    background-color: $block-background;
+    color: $block-foreground;
+    height: auto; 
+    border-radius: $block-radius;
+  
+    &-scroll { height: auto; }
+    
+    $gutter-background: rgba(color('white'), .5);
+    $gutter-foreground: color('black');
+    $gutter-border: 1px solid color('grey');
+    
+    $code-spacing: 5px;
+    
+    &-gutters { 
+      background: $gutter-background;
+      color: $gutter-foreground;
+      min-height: initial; 
+      border-right: $gutter-border;
+    }
+    &-linenumber { 
+      color: $gutter-foreground; 
+      margin-left: -$code-spacing;
+    }
+    &-code { 
+      padding: $code-spacing;
+    }
+  
+  }
+  
+  // Syntax Highlighting
+  $syntax-default: #dddddd;
+  $syntax-keyword: #6c9ef8;
+  $syntax-atom: #d89333;
+  $syntax-number: #85a300;
+  $syntax-def: #b77fdb;
+  $syntax-variable: #dddddd;
+  $syntax-variable-2: #dddddd;
+  $syntax-variable-3: #dddddd;
+  $syntax-property: #b77fdb;
+  $syntax-operator: #dddddd;
+  $syntax-comment: #767676;
+  $syntax-string: #d89333;
+  $syntax-string-2: #d89333;
+  $syntax-meta: #dddddd;
+  $syntax-error: #dc322f;
+  $syntax-qualifier: #6c9ef8;
+  $syntax-builtin: #6c9ef8;
+  $syntax-bracket: #dddddd;
+  $syntax-tag: #6c9ef8;
+  $syntax-attribute: #85a300;
+  $syntax-header: #d85896;
+  $syntax-quote: #6c9ef8;
+  $syntax-hr: #d89333;
+  $syntax-link: #b77fdb;
+  $syntax-rangeinfo: #6c71c4;
+  $syntax-minus: #dc322f;
+  $syntax-plus: #85a300;
+
+  .cm-s-default{ 
+    color: $syntax-default; 
+    .cm-keyword { color: $syntax-keyword; }
+    .cm-atom { color: $syntax-atom; }
+    .cm-number { color: $syntax-number; }
+    .cm-def { color: $syntax-def; }
+    .cm-variable { color: $syntax-variable; }
+    .cm-variable-2 { color: $syntax-variable-2; }
+    .cm-variable-3 { color: $syntax-variable-3; }
+    .cm-operator { color: $syntax-operator; }
+    .cm-comment { color: $syntax-comment; }
+    .cm-string { color: $syntax-string; }
+    .cm-string-2 { color: $syntax-string-2; }
+    .cm-meta { color: $syntax-meta; }
+    .cm-qualifier { color: $syntax-qualifier; }
+    .cm-builtin { color: $syntax-builtin; }
+    .cm-bracket { color: $syntax-bracket; }
+    .cm-tag { color: $syntax-tag; }
+    .cm-attribute { color: $syntax-attribute; }
+    .cm-header { color: $syntax-header; }
+    .cm-quote { color: $syntax-quote; }
+    .cm-hr { color: $syntax-hr; }
+    .cm-link { color: $syntax-link; }
+    .cm-rangeinfo { color: $syntax-rangeinfo; }
+    .cm-minus { color: $syntax-minus; }
+    .cm-plus { color: $syntax-plus; }
+    .cm-property { color: $syntax-property; }
+    .cm-error { color: $syntax-error; }
+  }
+  
+}

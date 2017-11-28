@@ -1,7 +1,7 @@
 <div class="feed tag">
     
-  <snippet v-for="post in posts" 
+  <snippet v-for="(post, index) in posts" 
            :post="post" 
-           :key="post"></snippet>
+           :key="index"></snippet>
   
 </div>

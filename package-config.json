@@ -1,9 +1,9 @@
 {
   "stylesheets": [
-    "style.css"
+    "style.css",
+    "dependencies/codemirror.css"
   ],
   "scripts": [
-    "markdown.js",
     "blog.js"
   ]
 }

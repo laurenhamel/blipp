@@ -208,7 +208,12 @@ const filters = {
 const methods = {
   
   setTitle( title ) {
+    
     document.title = title;
+    
+    event.$emit('title:changed');
+    event.$emit('blog:event', 'title:changed');
+    
   },
   
   socialURL( media, credentials = {} ) {
@@ -285,7 +290,9 @@ const methods = {
   }
   
 };
-
+  
+// Events
+let event = new Vue();
 // Feed
 let Feed = Vue.component('feed', {
   
@@ -338,6 +345,9 @@ let Feed = Vue.component('feed', {
           self.next = response.next;
 
         }
+        
+        event.$emit('feed:more');
+        event.$emit('blog:event', 'feed:more');
 
       });
       
@@ -368,6 +378,9 @@ let Feed = Vue.component('feed', {
         self.next = response.next;
         
       }
+      
+      event.$emit('feed:loaded');
+      event.$emit('blog:event', 'feed:loaded');
       
     });
     
@@ -401,6 +414,7 @@ let Post = Vue.component('post', {
   
   data() {
     return {
+      location: location,
       post: {
         config: {},
         meta: {
@@ -445,6 +459,9 @@ let Post = Vue.component('post', {
         self.post.meta.title 
       );
       
+      event.$emit('post:loaded');
+      event.$emit('blog:event', 'post:loaded');
+      
     });
     
   },
@@ -464,6 +481,9 @@ let Post = Vue.component('post', {
         BLOG_META.title + ' | ' + BLOG_META.prefix.post +
         self.post.meta.title
       );
+      
+      event.$emit('post:changed');
+      event.$emit('blog:event', 'post:changed');
       
       next();
       
@@ -523,6 +543,9 @@ let Category = Vue.component('category', {
           self.next = response.next;
 
         }
+        
+        event.$emit('category:more');
+        event.$emit('blog:event', 'category:more');
 
       });
       
@@ -559,6 +582,9 @@ let Category = Vue.component('category', {
         
       }
       
+      event.$emit('category:loaded');
+      event.$emit('blog:event', 'category:loaded');
+      
     });
     
   },
@@ -589,6 +615,9 @@ let Category = Vue.component('category', {
         self.next = response.next;
         
       }
+      
+      event.$emit('category:changed');
+      event.$emit('blog:event', 'category:changed');
       
       next();
       
@@ -648,6 +677,9 @@ let Tag = Vue.component('tag', {
           self.next = response.next;
 
         }
+        
+        event.$emit('tag:more');
+        event.$emit('blog:event', 'tag:more');
 
       });
       
@@ -684,6 +716,9 @@ let Tag = Vue.component('tag', {
         
       }
       
+      event.$emit('tag:loaded');
+      event.$emit('blog:event', 'tag:loaded');
+      
     });
     
   },
@@ -714,6 +749,9 @@ let Tag = Vue.component('tag', {
         self.next = response.next;
         
       }
+      
+      event.$emit('tag:changed');
+      event.$emit('blog:event', 'tag:changed');
       
       next();
       
@@ -785,6 +823,9 @@ let Author = Vue.component('author', {
           self.next = response.next;
 
         }
+        
+        event.$emit('author:more');
+        event.$emit('blog:event', 'author:more');
 
       });
       
@@ -828,24 +869,37 @@ let Author = Vue.component('author', {
       self.$route.params.author 
     );
     
-    // Get information about author.
-    api.getAuthorByName( self.$route.params.author ).then((response) => {
+    $.when(
       
-      self.about = response.data;
-      
-    });
+      // Get information about author.
+      api.getAuthorByName( self.$route.params.author ).then((response) => {
+
+        self.about = response.data;
+
+        event.$emit('author:loaded:info');
+
+      }),
     
-    // Get posts by author.
-    api.getPostsByAuthor( self.$route.params.author ).then((response) => {
-      
-      self.posts = response.data;
-      
-      if( response.next ) {
+      // Get posts by author.
+      api.getPostsByAuthor( self.$route.params.author ).then((response) => {
+
+        self.posts = response.data;
+
+        if( response.next ) {
+
+          self.more = true;
+          self.next = response.next;
+
+        }
         
-        self.more = true;
-        self.next = response.next;
-        
-      }
+        event.$emit('author:loaded:posts');
+
+      })
+      
+    ).done(function(){
+      
+      event.$emit('author:loaded');
+      event.$emit('blog:event', 'author:loaded');
       
     });
     
@@ -858,8 +912,7 @@ let Author = Vue.component('author', {
           limit: this.limit,
           sort: this.sort,
           order: this.order
-        }),
-        deferreds = [];
+        });
     
     // Set title.
     self.setTitle(
@@ -867,20 +920,18 @@ let Author = Vue.component('author', {
       to.params.author 
     );
     
-    // Get information about author.
-    deferreds.push(
+    $.when(
       
+      // Get information about author.
       api.getAuthorByName( to.params.author ).then((response) => {
       
         self.about = response.data;
+        
+        event.$emit('author:changed:info');
 
-      })
+      }),
     
-    );
-    
-    // Get posts by author.
-    deferreds.push(
-      
+      // Get posts by author.
       api.getPostsByAuthor( to.params.author ).then((response) => {
 
         self.posts = response.data;
@@ -891,12 +942,15 @@ let Author = Vue.component('author', {
           self.next = response.next;
 
         }
+        
+        event.$emit('author:changed:posts');
 
       })
       
-    );
-    
-    $.when(deferreds, function(){
+    ).done(function(){
+      
+      event.$emit('author:changed');
+      event.$emit('blog:event', 'author:changed');
       
       next();
       
@@ -969,8 +1023,31 @@ let Blog = new Vue({
   
   created() {
     
-    // Configure clipboard.
-    var clipboard = new Clipboard( '.copy' ),
+    // Create a chain reaction for all events.
+    event.$on('blog:event', function(e){
+      
+      var delay = 10,
+          kill = 1000, 
+          lapse = 0;
+      
+      var interval = setInterval(function(){
+        
+        lapse += delay;
+        
+        event.$emit(e + ':' + lapse);
+        
+      }, delay);
+      
+      setTimeout(function(){
+        
+        clearInterval( interval );
+        
+      }, kill + 1);
+      
+    });
+    
+    // Configure Clipboard.js.
+    let clipboard = new Clipboard( '.copy' ),
         flag = (target, signal, delay) => {
           
           $(target).addClass(signal);
@@ -990,6 +1067,102 @@ let Blog = new Vue({
       .on('error', function(event){
         flag(event.trigger, 'copy-error', 2000);
       });
+    
+    // Configue CodeMirror.
+    let codemirror = {
+      
+      languages: [],
+      
+      interpret( element ) {
+        
+        var code = $(element).html().trim(),
+            language = element.className.split(/\s+/).filter(function(c){
+              return c.indexOf('language-') === 0;
+            })[0].replace('language-', '');
+        
+        $(element).empty();
+        
+        var $textarea = $('<textarea>', {
+          html: code,
+          css: {
+            'margin-top': '-99999px',
+            'margin-left': '-99999px',
+            position: 'absolute',
+            opacity: 0
+          }
+        }).appendTo(document.body);
+
+        code = $textarea.val();
+
+        $textarea.remove();
+        
+        return {
+          code: code,
+          language: language
+        };
+        
+      },
+      
+      parse( element, data ) {
+        
+        return CodeMirror(element, {
+          tabSize: 2,
+          value: data.code,
+          mode: data.language,
+          lineNumbers: true,
+          readOnly: true,
+          viewportMargin: Infinity
+        });
+        
+      },
+      
+      setup() {
+        
+        $('pre > code').each((index, element) => { 
+
+          var data = codemirror.interpret( element );
+          
+          if( codemirror.languages.indexOf( data.language ) == -1 ) { 
+            
+            codemirror.languages.push( data.language );
+            
+            $(document).queue('codemirror', (next) => {
+              
+              $.getScript('js/dependencies/codemirror/' + data.language + '.js').then(() => { 
+              
+                codemirror.parse(element, data);
+                
+                next();
+              
+              });
+              
+            });
+            
+          }
+          
+          else {
+            
+            $(document).queue('codemirror', (next) => {
+              
+              codemirror.parse(element, data);
+                                                       
+              next();
+              
+            });
+            
+          }
+
+        });
+        
+        $(document).dequeue('codemirror');
+        
+      }
+      
+    };
+    
+    // Wait for posts to fully load.
+    event.$on('post:loaded:10', codemirror.setup);
+    event.$on('post:changed:10', codemirror.setup);
     
   }
 

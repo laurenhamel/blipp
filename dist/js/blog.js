@@ -244,7 +244,11 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
   };
   var methods = {
     setTitle: function setTitle(title) {
+
       document.title = title;
+
+      event.$emit('title:changed');
+      event.$emit('blog:event', 'title:changed');
     },
     socialURL: function socialURL(media) {
       var credentials = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -321,6 +325,8 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
     }
   };
 
+  // Events
+  var event = new Vue();
   // Feed
   var Feed = Vue.component('feed', {
 
@@ -371,6 +377,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
             self.more = true;
             self.next = response.next;
           }
+
+          event.$emit('feed:more');
+          event.$emit('blog:event', 'feed:more');
         });
       }
     }, methods),
@@ -397,6 +406,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
           self.more = true;
           self.next = response.next;
         }
+
+        event.$emit('feed:loaded');
+        event.$emit('blog:event', 'feed:loaded');
       });
     }
   });
@@ -428,6 +440,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
 
     data: function data() {
       return {
+        location: location,
         post: {
           config: {},
           meta: {
@@ -463,6 +476,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
 
         // Set title.
         self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.post + self.post.meta.title);
+
+        event.$emit('post:loaded');
+        event.$emit('blog:event', 'post:loaded');
       });
     },
     beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
@@ -477,6 +493,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
 
         // Set title.
         self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.post + self.post.meta.title);
+
+        event.$emit('post:changed');
+        event.$emit('blog:event', 'post:changed');
 
         next();
       });
@@ -531,6 +550,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
             self.more = true;
             self.next = response.next;
           }
+
+          event.$emit('category:more');
+          event.$emit('blog:event', 'category:more');
         });
       }
     }, methods),
@@ -559,6 +581,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
           self.more = true;
           self.next = response.next;
         }
+
+        event.$emit('category:loaded');
+        event.$emit('blog:event', 'category:loaded');
       });
     },
     beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
@@ -583,6 +608,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
           self.more = true;
           self.next = response.next;
         }
+
+        event.$emit('category:changed');
+        event.$emit('blog:event', 'category:changed');
 
         next();
       });
@@ -637,6 +665,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
             self.more = true;
             self.next = response.next;
           }
+
+          event.$emit('tag:more');
+          event.$emit('blog:event', 'tag:more');
         });
       }
     }, methods),
@@ -665,6 +696,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
           self.more = true;
           self.next = response.next;
         }
+
+        event.$emit('tag:loaded');
+        event.$emit('blog:event', 'tag:loaded');
       });
     },
     beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
@@ -689,6 +723,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
           self.more = true;
           self.next = response.next;
         }
+
+        event.$emit('tag:changed');
+        event.$emit('blog:event', 'tag:changed');
 
         next();
       });
@@ -755,6 +792,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
             self.more = true;
             self.next = response.next;
           }
+
+          event.$emit('author:more');
+          event.$emit('blog:event', 'author:more');
         });
       },
       getFbProfileImage: function getFbProfileImage() {
@@ -790,11 +830,15 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       // Set title.
       self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.author + self.$route.params.author);
 
+      $.when(
+
       // Get information about author.
       api.getAuthorByName(self.$route.params.author).then(function (response) {
 
         self.about = response.data;
-      });
+
+        event.$emit('author:loaded:info');
+      }),
 
       // Get posts by author.
       api.getPostsByAuthor(self.$route.params.author).then(function (response) {
@@ -806,6 +850,12 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
           self.more = true;
           self.next = response.next;
         }
+
+        event.$emit('author:loaded:posts');
+      })).done(function () {
+
+        event.$emit('author:loaded');
+        event.$emit('blog:event', 'author:loaded');
       });
     },
     beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
@@ -815,20 +865,23 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
         limit: this.limit,
         sort: this.sort,
         order: this.order
-      }),
-          deferreds = [];
+      });
 
       // Set title.
       self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.author + to.params.author);
 
+      $.when(
+
       // Get information about author.
-      deferreds.push(api.getAuthorByName(to.params.author).then(function (response) {
+      api.getAuthorByName(to.params.author).then(function (response) {
 
         self.about = response.data;
-      }));
+
+        event.$emit('author:changed:info');
+      }),
 
       // Get posts by author.
-      deferreds.push(api.getPostsByAuthor(to.params.author).then(function (response) {
+      api.getPostsByAuthor(to.params.author).then(function (response) {
 
         self.posts = response.data;
 
@@ -837,9 +890,12 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
           self.more = true;
           self.next = response.next;
         }
-      }));
 
-      $.when(deferreds, function () {
+        event.$emit('author:changed:posts');
+      })).done(function () {
+
+        event.$emit('author:changed');
+        event.$emit('blog:event', 'author:changed');
 
         next();
       });
@@ -902,7 +958,27 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
 
     created: function created() {
 
-      // Configure clipboard.
+      // Create a chain reaction for all events.
+      event.$on('blog:event', function (e) {
+
+        var delay = 10,
+            kill = 1000,
+            lapse = 0;
+
+        var interval = setInterval(function () {
+
+          lapse += delay;
+
+          event.$emit(e + ':' + lapse);
+        }, delay);
+
+        setTimeout(function () {
+
+          clearInterval(interval);
+        }, kill + 1);
+      });
+
+      // Configure Clipboard.js.
       var clipboard = new Clipboard('.copy'),
           flag = function flag(target, signal, delay) {
 
@@ -919,6 +995,88 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       }).on('error', function (event) {
         flag(event.trigger, 'copy-error', 2000);
       });
+
+      // Configue CodeMirror.
+      var codemirror = {
+
+        languages: [],
+
+        interpret: function interpret(element) {
+
+          var code = $(element).html().trim(),
+              language = element.className.split(/\s+/).filter(function (c) {
+            return c.indexOf('language-') === 0;
+          })[0].replace('language-', '');
+
+          $(element).empty();
+
+          var $textarea = $('<textarea>', {
+            html: code,
+            css: {
+              'margin-top': '-99999px',
+              'margin-left': '-99999px',
+              position: 'absolute',
+              opacity: 0
+            }
+          }).appendTo(document.body);
+
+          code = $textarea.val();
+
+          $textarea.remove();
+
+          return {
+            code: code,
+            language: language
+          };
+        },
+        parse: function parse(element, data) {
+
+          return CodeMirror(element, {
+            tabSize: 2,
+            value: data.code,
+            mode: data.language,
+            lineNumbers: true,
+            readOnly: true,
+            viewportMargin: Infinity
+          });
+        },
+        setup: function setup() {
+
+          $('pre > code').each(function (index, element) {
+
+            var data = codemirror.interpret(element);
+
+            if (codemirror.languages.indexOf(data.language) == -1) {
+
+              codemirror.languages.push(data.language);
+
+              $(document).queue('codemirror', function (next) {
+
+                $.getScript('js/dependencies/codemirror/' + data.language + '.js').then(function () {
+
+                  codemirror.parse(element, data);
+
+                  next();
+                });
+              });
+            } else {
+
+              $(document).queue('codemirror', function (next) {
+
+                codemirror.parse(element, data);
+
+                next();
+              });
+            }
+          });
+
+          $(document).dequeue('codemirror');
+        }
+      };
+
+      // Wait for posts to fully load.
+      event.$on('post:loaded:10', codemirror.setup);
+      event.$on('post:changed:10', codemirror.setup);
     }
   });
 });

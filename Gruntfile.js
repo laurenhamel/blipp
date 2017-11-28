@@ -39,7 +39,7 @@ module.exports = function(grunt){
         options: { reload: true }
       },
       blog: {
-        files: ['posts/**/*', 'drafts/**/*', 'authors/**/*'],
+        files: ['posts/**/*', 'drafts/**/*', 'authors/**/*', 'router.json', 'meta.json'],
         tasks: ['includes', 'replace:dev']
       }
     },
@@ -97,9 +97,22 @@ module.exports = function(grunt){
       js: ['src/js/**/*.js']
     },
     uglify: {
-      files: [
-        { expand: true, cwd: 'src/js/', src: ['**/*.js'], dest: 'dist/js' }
-      ]
+      js: {
+        files: [
+          { 
+            expand: true, 
+            cwd: '.', 
+            src: [
+              'dist/js/**/*.js', 
+              '!dist/js/**/*.min.js',
+              '!dist/js/**/moment.js',
+              '!dist/js/dependencies/codemirror/*.js',
+            ],
+            dest: '.', 
+            ext: '.min.js' 
+          }
+        ]
+      }
     },
     replace: {
       dev: {
@@ -231,6 +244,10 @@ module.exports = function(grunt){
     },
     copydeps: {
       dependencies: {
+        options: {
+          unminified: true,
+          minified: true
+        },
         pkg: 'package.json',
         dest: 'dist/js/dependencies/'
       }
@@ -256,9 +273,30 @@ module.exports = function(grunt){
           { expand: true, cwd: 'src/images/', src: ['**'], dest: 'dist/images' },
           { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'dist/fonts' }
         ]
+      },
+      dependencies: {
+        files: [
+          { 
+            expand: true, 
+            cwd: 'node_modules/codemirror/lib/', 
+            src: ['codemirror.css'], 
+            dest: 'dist/css/dependencies' 
+          },
+          { 
+            expand: true, 
+            flatten: true,
+            cwd: 'node_modules/codemirror/mode/', 
+            src: ['**/*.js'], 
+            dest: 'dist/js/dependencies/codemirror/' 
+          },
+        ]
       }
     },
-    clean: ['dist/']
+    clean: {
+      all: ['dist/'],
+      unminjs: ['dist/js/**/*.js', '!dist/js/**/*.min.js', '!dist/js/dependencies/codemirror/*.js'],
+      unmincss: ['dist/css/**/*.css', '!dist/css/**/*.min.css']
+    }
   });
   
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -280,22 +318,23 @@ module.exports = function(grunt){
     'sass:dev',
     'jshint',
     'babel',
-    'copy:php',
-    'copy:assets',
+    'uglify',
+    'copy',
     'includes',
     'replace:dev'
   ]);
   grunt.registerTask('dev', ['watch']);
   grunt.registerTask('dist', [
-    'clean',
+    'clean:all',
     'copydeps',
     'sass:dist',
     'postcss',
     'cssmin',
-    'uglify',
-    'copy:assets',
-    'copy:php',
+    'copy',
     'babel',
+    'uglify',
+    'clean:unminjs',
+    'clean:unmincss',
     'includes',
     'replace:dist'
   ]);
