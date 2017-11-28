@@ -12,7 +12,7 @@ module.exports = function(grunt){
       },
       sass: {
         files: ['src/scss/**/*.scss'],
-        tasks: ['sass:dev']
+        tasks: ['sass:dev', 'postcss']
       },
       js: {
         files: ['src/js/**/*.js'],
@@ -74,20 +74,21 @@ module.exports = function(grunt){
       options: { 
         processors: [ require('autoprefixer')({ browsers: 'last 2 versions' }) ]
       },
-      files: [
-        { expand: true, cwd: 'dist/css', src: ['**/*.css'], dest: '.', }
-      ]
+      dist: {
+        src: ['dist/css/**/*.css']
+      }
     },
     cssmin: {
-      files: [
+      css: {
+        files: [
         { 
           expand: true, 
-          cwd: 'dist/css', 
-          src: ['**/*.css', '!**/*.min.css'], 
+          src: ['dist/css/**/*.css', '!dist/css/**/*.min.css'], 
           dest: '.',
           ext: '.min.css'
         }
       ]
+      }
     },
     jshint: {
       options: {
@@ -316,6 +317,7 @@ module.exports = function(grunt){
   grunt.registerTask('startup', [
     'copydeps',
     'sass:dev',
+    'postcss',
     'jshint',
     'babel',
     'uglify',
@@ -329,14 +331,14 @@ module.exports = function(grunt){
     'copydeps',
     'sass:dist',
     'postcss',
-    'cssmin',
     'copy',
+    'cssmin',
     'babel',
     'uglify',
+    'includes',
+    'replace:dist',
     'clean:unminjs',
     'clean:unmincss',
-    'includes',
-    'replace:dist'
   ]);
   
 };
