@@ -1,15 +1,11 @@
 // Set root path.
 const ROOT_PATH = '/markdown-blog/';
 
-// Set paths to blog data.
-const META_PATH = 'meta.json';
-const ROUTER_PATH = 'router.json';
-
 // Load JSON data.
 $.when(
   
-  $.getJSON(ROOT_PATH + META_PATH).then(data => { return data; }),
-  $.getJSON(ROOT_PATH + ROUTER_PATH).then(data => { return data; })
+  $.getJSON(ROOT_PATH + 'meta.json').then(data => { return data; }),
+  $.getJSON(ROOT_PATH + 'router.json').then(data => { return data; })
   
 ).done((BLOG_META, BLOG_ROUTER) => {
 
@@ -99,6 +95,13 @@ class API {
   constructor( options ) {
     this.params = $.extend({}, options);
     this.src = API_PATH;
+  }
+  
+  // Feed
+  getFeed() {
+    
+    return $.getJSON( this.src + '/feed/?' + $.param(this.params) );
+    
   }
   
   // Posts

@@ -9,14 +9,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // Set root path.
 var ROOT_PATH = '/markdown-blog/';
 
-// Set paths to blog data.
-var META_PATH = 'meta.json';
-var ROUTER_PATH = 'router.json';
-
 // Load JSON data.
-$.when($.getJSON(ROOT_PATH + META_PATH).then(function (data) {
+$.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
   return data;
-}), $.getJSON(ROOT_PATH + ROUTER_PATH).then(function (data) {
+}), $.getJSON(ROOT_PATH + 'router.json').then(function (data) {
   return data;
 })).done(function (BLOG_META, BLOG_ROUTER) {
 
@@ -110,10 +106,19 @@ $.when($.getJSON(ROOT_PATH + META_PATH).then(function (data) {
       this.src = API_PATH;
     }
 
-    // Posts
+    // Feed
 
 
     _createClass(API, [{
+      key: 'getFeed',
+      value: function getFeed() {
+
+        return $.getJSON(this.src + '/feed/?' + $.param(this.params));
+      }
+
+      // Posts
+
+    }, {
       key: 'getPosts',
       value: function getPosts() {
 
