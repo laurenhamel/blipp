@@ -38,9 +38,13 @@
            :post="post" 
            :key="post"></snippet>
   
-    <div v-if="loading">FETCHING POSTS...</div>
-
-    <button v-if="more && !loading" @click="loadMore( 1000 )">Load More</button>
+    <loading :loading="loading"></loading>
+  
+    <button class="button fetch"
+            v-if="more && !loading" 
+            @click="loadMore( 1000 )">
+      Load More
+    </button>
   
   </div>
   

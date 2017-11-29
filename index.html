@@ -22,9 +22,13 @@
              :post="post" 
              :key="index"></snippet>
     
-    <div v-if="loading">FETCHING POSTS...</div>
+    <loading :loading="loading"></loading>
     
-    <button v-if="more && !loading" @click="loadMore( 1000 )">Load More</button>
+    <button class="button fetch"
+            v-if="more && !loading" 
+            @click="loadMore( 1000 )">
+      Load More
+    </button>
     
   </div>
 </template>
@@ -146,6 +150,14 @@
              :post="post" 
              :key="index"></snippet>
     
+    <loading :loading="loading"></loading>
+    
+    <button class="button fetch"
+            v-if="more && !loading" 
+            @click="loadMore( 1000 )">
+      Load More
+    </button>
+    
   </div>
 </template>
 
@@ -155,6 +167,14 @@
     <snippet v-for="(post, index) in posts" 
              :post="post" 
              :key="index"></snippet>
+    
+    <loading :loading="loading"></loading>
+    
+    <button class="button fetch"
+            v-if="more && !loading" 
+            @click="loadMore( 1000 )">
+      Load More
+    </button>
     
   </div>
 </template>
@@ -200,12 +220,24 @@
              :post="post" 
              :key="post"></snippet>
     
-      <div v-if="loading">FETCHING POSTS...</div>
-
-      <button v-if="more && !loading" @click="loadMore( 1000 )">Load More</button>
+      <loading :loading="loading"></loading>
+    
+      <button class="button fetch"
+              v-if="more && !loading" 
+              @click="loadMore( 1000 )">
+        Load More
+      </button>
     
     </div>
     
+  </div>
+</template>
+
+<template id="loading">
+  <div class="loading" v-if="loading">
+
+    <span class="spinner fa-spinner"></span>
+
   </div>
 </template>
   

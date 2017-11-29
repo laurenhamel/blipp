@@ -4,8 +4,12 @@
            :post="post" 
            :key="index"></snippet>
   
-  <div v-if="loading">FETCHING POSTS...</div>
+  <loading :loading="loading"></loading>
   
-  <button v-if="more && !loading" @click="loadMore( 1000 )">Load More</button>
+  <button class="button fetch"
+          v-if="more && !loading" 
+          @click="loadMore( 1000 )">
+    Load More
+  </button>
   
 </div>

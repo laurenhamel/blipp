@@ -31,8 +31,13 @@ a {
   
 }
 
-a, #{$all-buttons} {
+a, 
+#{$all-buttons} {
   cursor: pointer;
+}
+
+#{$all-buttons} {
+  border-radius: 0;
 }
 
 #{$all-inputs} {

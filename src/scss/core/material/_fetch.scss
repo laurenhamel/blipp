@@ -1,0 +1,25 @@
+.fetch {
+  
+  $normal-background: lighten(color('grey', 'light'), 15%);
+  $normal-color: darken(color('grey', 'light'), 40%);
+  $normal-border: color('grey', 'light');
+  
+  $hover-background: $normal-border;
+  $hover-color: darken($normal-color, 10%);
+  $hover-border: $hover-background;
+  
+  display: block;
+  width: 300px;
+  margin: 0 auto;
+  background-color: $normal-background;
+  color: $normal-color;
+  border-color: $normal-border;
+  
+  &:hover,
+  &:focus {
+    background-color: $hover-background;
+    color: $hover-color;
+    border-color: $hover-border;
+  }
+  
+}

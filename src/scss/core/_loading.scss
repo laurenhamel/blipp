@@ -1,0 +1,23 @@
+.loading {
+  
+  $size: 50px;
+  $color: color('grey', 'light');
+  $speed: 1s;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  .spinner {
+    display: block;
+    font-size: $size;
+    color: $color;
+    animation: spin $speed linear forwards infinite; 
+  }
+  
+  @keyframes spin {
+    from  { transform: rotate(0deg); }
+    to    { transform: rotate(360deg); }
+  } 
+  
+}

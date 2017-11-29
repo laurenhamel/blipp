@@ -323,10 +323,46 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       // Return the source.
       return src;
     }
+  },
+      loadMore = function loadMore(delay) {
+
+    delay = delay || 0;
+
+    var self = this,
+        api = new API({
+      sort: this.sort,
+      order: this.order,
+      limit: this.next.limit,
+      offset: this.next.offset
+    });
+
+    self.next = {};
+    self.more = false;
+    self.loading = true;
+
+    // Get posts.
+    api.getPosts().then(function (response) {
+
+      setTimeout(function () {
+
+        self.posts = [].concat(_toConsumableArray(self.posts), _toConsumableArray(response.data));
+        self.loading = false;
+      }, delay);
+
+      if (response.next) {
+
+        self.more = true;
+        self.next = response.next;
+      }
+
+      event.$emit(self.$options.name.toLowerCase() + ':more');
+      event.$emit('blog:event', self.$options.name.toLowerCase() + ':more');
+    });
   };
 
   // Events
   var event = new Vue();
+
   // Feed
   var Feed = Vue.component('feed', {
 
@@ -347,41 +383,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
     filters: $.extend({}, filters),
 
     methods: $.extend({
-      loadMore: function loadMore(delay) {
 
-        delay = delay || 0;
+      loadMore: loadMore
 
-        var self = this,
-            api = new API({
-          sort: this.sort,
-          order: this.order,
-          limit: this.next.limit,
-          offset: this.next.offset
-        });
-
-        self.next = {};
-        self.more = false;
-        self.loading = true;
-
-        // Get posts.
-        api.getPosts().then(function (response) {
-
-          setTimeout(function () {
-
-            self.posts = [].concat(_toConsumableArray(self.posts), _toConsumableArray(response.data));
-            self.loading = false;
-          }, delay);
-
-          if (response.next) {
-
-            self.more = true;
-            self.next = response.next;
-          }
-
-          event.$emit('feed:more');
-          event.$emit('blog:event', 'feed:more');
-        });
-      }
     }, methods),
 
     created: function created() {
@@ -520,41 +524,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
 
 
     methods: $.extend({
-      loadMore: function loadMore(delay) {
 
-        delay = delay || 0;
+      loadMore: loadMore
 
-        var self = this,
-            api = new API({
-          sort: this.sort,
-          order: this.order,
-          limit: this.next.limit,
-          offset: this.next.offset
-        });
-
-        self.next = {};
-        self.more = false;
-        self.loading = true;
-
-        // Get posts.
-        api.getPosts().then(function (response) {
-
-          setTimeout(function () {
-
-            self.posts = [].concat(_toConsumableArray(self.posts), _toConsumableArray(response.data));
-            self.loading = false;
-          }, delay);
-
-          if (response.next) {
-
-            self.more = true;
-            self.next = response.next;
-          }
-
-          event.$emit('category:more');
-          event.$emit('blog:event', 'category:more');
-        });
-      }
     }, methods),
 
     filters: $.extend({}, filters),
@@ -635,41 +607,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
 
 
     methods: $.extend({
-      loadMore: function loadMore(delay) {
 
-        delay = delay || 0;
+      loadMore: loadMore
 
-        var self = this,
-            api = new API({
-          sort: this.sort,
-          order: this.order,
-          limit: this.next.limit,
-          offset: this.next.offset
-        });
-
-        self.next = {};
-        self.more = false;
-        self.loading = true;
-
-        // Get posts.
-        api.getPosts().then(function (response) {
-
-          setTimeout(function () {
-
-            self.posts = [].concat(_toConsumableArray(self.posts), _toConsumableArray(response.data));
-            self.loading = false;
-          }, delay);
-
-          if (response.next) {
-
-            self.more = true;
-            self.next = response.next;
-          }
-
-          event.$emit('tag:more');
-          event.$emit('blog:event', 'tag:more');
-        });
-      }
     }, methods),
 
     filters: $.extend({}, filters),
@@ -762,41 +702,9 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
 
 
     methods: $.extend({
-      loadMore: function loadMore(delay) {
 
-        delay = delay || 0;
+      loadMore: loadMore,
 
-        var self = this,
-            api = new API({
-          sort: this.sort,
-          order: this.order,
-          limit: this.next.limit,
-          offset: this.next.offset
-        });
-
-        self.next = {};
-        self.more = false;
-        self.loading = true;
-
-        // Get posts.
-        api.getPosts().then(function (response) {
-
-          setTimeout(function () {
-
-            self.posts = [].concat(_toConsumableArray(self.posts), _toConsumableArray(response.data));
-            self.loading = false;
-          }, delay);
-
-          if (response.next) {
-
-            self.more = true;
-            self.next = response.next;
-          }
-
-          event.$emit('author:more');
-          event.$emit('blog:event', 'author:more');
-        });
-      },
       getFbProfileImage: function getFbProfileImage() {
 
         var self = this,
@@ -899,6 +807,18 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
 
         next();
       });
+    }
+  });
+
+  // Loading
+  var Loading = Vue.component('loading', {
+
+    template: '#loading',
+
+    props: ['loading'],
+
+    data: function data() {
+      return {};
     }
   });
 

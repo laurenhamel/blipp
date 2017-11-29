@@ -289,31 +289,8 @@ const methods = {
     
   }
   
-};
-  
-// Events
-let event = new Vue();
-// Feed
-let Feed = Vue.component('feed', {
-  
-  template: '#feed',
-  
-  props: ['limit', 'sort', 'order'],
-  
-  data() {
-    return {
-      posts: [],
-      next: {},
-      more: false,
-      loading: false
-    };
-  },
-  
-  filters: $.extend({}, filters),
-  
-  methods: $.extend({
-    
-    loadMore( delay ) {
+},
+      loadMore = function( delay ) {
       
       delay = delay || 0;
       
@@ -345,13 +322,38 @@ let Feed = Vue.component('feed', {
           self.next = response.next;
 
         }
-        
-        event.$emit('feed:more');
-        event.$emit('blog:event', 'feed:more');
+
+        event.$emit(self.$options.name.toLowerCase() + ':more');
+        event.$emit('blog:event', self.$options.name.toLowerCase() + ':more');
 
       });
       
-    }
+    };
+  
+// Events
+let event = new Vue();
+  
+// Feed
+let Feed = Vue.component('feed', {
+  
+  template: '#feed',
+  
+  props: ['limit', 'sort', 'order'],
+  
+  data() {
+    return {
+      posts: [],
+      next: {},
+      more: false,
+      loading: false
+    };
+  },
+  
+  filters: $.extend({}, filters),
+  
+  methods: $.extend({
+    
+    loadMore
     
   }, methods),
   
@@ -511,45 +513,7 @@ let Category = Vue.component('category', {
   
   methods: $.extend({
     
-    loadMore( delay ) {
-      
-      delay = delay || 0;
-      
-      var self = this,
-          api = new API({
-            sort: this.sort,
-            order: this.order,
-            limit: this.next.limit,
-            offset: this.next.offset
-          });
-      
-      self.next = {};
-      self.more = false;
-      self.loading = true;
-    
-      // Get posts.
-      api.getPosts().then((response) => {
-
-        setTimeout(function(){
-          
-          self.posts = [...self.posts, ...response.data];
-          self.loading = false;
-          
-        }, delay);
-
-        if( response.next ) {
-
-          self.more = true;
-          self.next = response.next;
-
-        }
-        
-        event.$emit('category:more');
-        event.$emit('blog:event', 'category:more');
-
-      });
-      
-    }
+    loadMore
     
   }, methods),
   
@@ -645,45 +609,7 @@ let Tag = Vue.component('tag', {
   
   methods: $.extend({
     
-    loadMore( delay ) {
-      
-      delay = delay || 0;
-      
-      var self = this,
-          api = new API({
-            sort: this.sort,
-            order: this.order,
-            limit: this.next.limit,
-            offset: this.next.offset
-          });
-      
-      self.next = {};
-      self.more = false;
-      self.loading = true;
-    
-      // Get posts.
-      api.getPosts().then((response) => {
-
-        setTimeout(function(){
-          
-          self.posts = [...self.posts, ...response.data];
-          self.loading = false;
-          
-        }, delay);
-
-        if( response.next ) {
-
-          self.more = true;
-          self.next = response.next;
-
-        }
-        
-        event.$emit('tag:more');
-        event.$emit('blog:event', 'tag:more');
-
-      });
-      
-    }
+    loadMore
     
   }, methods),
   
@@ -791,45 +717,7 @@ let Author = Vue.component('author', {
   
   methods: $.extend({
     
-    loadMore( delay ) {
-      
-      delay = delay || 0;
-      
-      var self = this,
-          api = new API({
-            sort: this.sort,
-            order: this.order,
-            limit: this.next.limit,
-            offset: this.next.offset
-          });
-      
-      self.next = {};
-      self.more = false;
-      self.loading = true;
-    
-      // Get posts.
-      api.getPosts().then((response) => {
-
-        setTimeout(function(){
-          
-          self.posts = [...self.posts, ...response.data];
-          self.loading = false;
-          
-        }, delay);
-
-        if( response.next ) {
-
-          self.more = true;
-          self.next = response.next;
-
-        }
-        
-        event.$emit('author:more');
-        event.$emit('blog:event', 'author:more');
-
-      });
-      
-    },
+    loadMore,
     
     getFbProfileImage() {
       
@@ -956,6 +844,19 @@ let Author = Vue.component('author', {
       
     });
     
+  }
+  
+});
+  
+// Loading
+let Loading = Vue.component('loading', {
+  
+  template: '#loading',
+  
+  props: ['loading'],
+  
+  data() {
+    return {};
   }
   
 });
