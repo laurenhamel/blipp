@@ -541,7 +541,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       });
 
       // Set title.
-      self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.tag + self.$route.params.category);
+      self.setTitle(BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.tag + self.$route.params.category);
 
       // Get posts by category.
       api.getPostsByCategory(self.$route.params.category).then(function (response) {
@@ -568,7 +568,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       });
 
       // Set title.
-      self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.tag + to.params.category);
+      self.setTitle(BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.tag + to.params.category);
 
       // Get posts by Category.
       api.getPostsByCategory(to.params.category).then(function (response) {
@@ -624,7 +624,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       });
 
       // Set title.
-      self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.tag + self.$route.params.tag);
+      self.setTitle(BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.tag + self.$route.params.tag);
 
       // Get posts by category.
       api.getPostsByTag(self.$route.params.tag).then(function (response) {
@@ -651,7 +651,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       });
 
       // Set title.
-      self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.tag + to.params.tag);
+      self.setTitle(BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.tag + to.params.tag);
 
       // Get posts by Category.
       api.getPostsByTag(to.params.tag).then(function (response) {
@@ -736,7 +736,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       });
 
       // Set title.
-      self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.author + self.$route.params.author);
+      self.setTitle(BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.author + self.$route.params.author);
 
       $.when(
 
@@ -776,7 +776,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       });
 
       // Set title.
-      self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.author + to.params.author);
+      self.setTitle(BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.author + to.params.author);
 
       $.when(
 

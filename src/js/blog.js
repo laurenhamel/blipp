@@ -530,7 +530,7 @@ let Category = Vue.component('category', {
     
     // Set title.
     self.setTitle( 
-      BLOG_META.title + ' | ' + BLOG_META.prefix.tag + 
+      BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.tag + 
       self.$route.params.category 
     );
     
@@ -564,7 +564,7 @@ let Category = Vue.component('category', {
     
     // Set title.
     self.setTitle( 
-      BLOG_META.title + ' | ' + BLOG_META.prefix.tag +
+      BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.tag +
       to.params.category 
     );
     
@@ -626,7 +626,7 @@ let Tag = Vue.component('tag', {
     
     // Set title.
     self.setTitle( 
-      BLOG_META.title + ' | ' + BLOG_META.prefix.tag +
+      BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.tag +
       self.$route.params.tag 
     );
     
@@ -660,7 +660,7 @@ let Tag = Vue.component('tag', {
     
     // Set title.
     self.setTitle( 
-      BLOG_META.title + ' | ' + BLOG_META.prefix.tag + 
+      BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.tag + 
       to.params.tag 
     );
     
@@ -753,7 +753,7 @@ let Author = Vue.component('author', {
     
     // Set title.
     self.setTitle( 
-      BLOG_META.title + ' | ' + BLOG_META.prefix.author + 
+      BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.author + 
       self.$route.params.author 
     );
     
@@ -804,7 +804,7 @@ let Author = Vue.component('author', {
     
     // Set title.
     self.setTitle(
-      BLOG_META.title + ' | ' + BLOG_META.prefix.author +
+      BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.author +
       to.params.author 
     );
     
