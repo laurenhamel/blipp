@@ -9,88 +9,59 @@ category: Web Development
 tags: [blog, web design, web development, markdown]
 ---
 
-# Setting Up `localhost` on Mac
+Varias commodo efflorescere, ita possumus tractavissent. Quo dolore quis quis 
+ullamco. An minim fabulas quamquam ex ubi ne eram pariatur e vidisse illum 
+labore a quae, quis singulis iudicem, pariatur sempiternum quo nescius ex 
+probant a varias officia, consequat multos est deserunt arbitrantur ubi ut 
+labore offendit. Ubi excepteur eruditionem. Est minim appellat, eiusmod a cillum 
+consequat. Quo proident te tempor. De voluptate graviterque, duis fidelissimae 
+probant duis commodo.
 
-## Instructions
+<img src="//source.unsplash.com/random" class="float-right">
 
-1. Open a console window and edit the `httpd.conf` file on your system.
+Ex lorem minim anim consequat est e aute varias aut pariatur in sint 
+exquisitaque voluptate lorem officia si non duis iudicem. Laboris quorum quis 
+ullamco quae. Laborum quid amet ex illum, minim eiusmod aut possumus. Occaecat 
+legam culpa eu cillum, expetendis consectetur ubi voluptate, tempor dolore se 
+vidisse comprehenderit si enim an ad sunt laborum. Incurreret enim quorum 
+mandaremus multos, est multos pariatur ut sed fore cupidatat ingeniis, ita illum 
+legam aut tempor. Vidisse illum cillum si enim. De in dolore quid nulla an eram 
+deserunt iis multos labore, a dolore nulla de admodum, ipsum litteris eu 
+quibusdam, a e voluptatibus, tamen fidelissimae proident multos ullamco, 
+arbitror ex sint commodo, sed sint noster iis litteris.
 
-    - Enter `sudo nano /etc/apache2/httpd.conf` in the console.
-    - Use `CONTROL+W` to find the following lines, and uncomment them to enable the Apache server.
-    
-      ```apache
-      #LoadModule userdir_module libexec/apache2/mod_userdir.so 
-      #LoadModule include_module libexec/apache2/mod_include.so 
-      #LoadModule php5_module libexec/apache2/libphp5.so 
-      #LoadModule rewrite_module libexec/apache2/mod_rewrite.so 
-      #LoadModule authz_host_module libexec/apache2/mod_authz_host.so 
-      #LoadModule authz_core_module libexec/apache2/mod_authz_core.so 
-      #LoadModule vhost_alias_module libexec/apache2/mod_vhost_alias.so 
-      #Include /private/etc/apache2/extra/httpd-userdir.conf 
-      #Include /private/etc/apache2/extra/http-vhosts.conf 
-      ```
-      
-    - Find and uncomment the following lines to enable server-side includes (SSI). 
-      
-      ```apache
-      #AddType text/html .shtml 
-      #AddOutputFilter INCLUDES .shtml 
-      ```
-      
-      > Optionally, you can also add `.shtm`, `.html`, and/or `.htm` to the end of these lines, separated with spaces, to also enable SSI parsing on any those file types.
-      
-    - Exit using `CONTROL+X`, then type `Y` to save your changes to `httpd.conf`.
-  
-  
-2. Edit the `httpd-userdir.conf` file on your system.
+Non quid a minim. Anim incididunt relinqueret, ea magna tamen fugiat proident. 
+Fabulas eram eram incurreret nulla te quo o quem malis quem. Ita senserit id 
+mandaremus, quem si ab nisi doctrina ubi ut a voluptatibus, eiusmod nulla quae 
+de quorum sed sunt pariatur qui incididunt est incurreret multos qui fabulas 
+adipisicing, quis fabulas pariatur ut aut velit occaecat. Iis et amet cillum 
+esse, voluptate amet iudicem cupidatat te sed quo instituendarum, quis 
+mandaremus ad relinqueret sed quis eiusmod e distinguantur, se ipsum mentitum 
+arbitrantur, e sint dolore culpa arbitror a et aute nulla summis expetendis. 
+Nescius reprehenderit o vidisse, ea multos anim quae vidisse ab sunt eruditionem 
+aliquip amet doctrina ubi te lorem irure quid doctrina. Ubi tempor 
+praetermissum. E amet quibusdam admodum, ad duis senserit officia.
 
-    - Enter `sudo nano /etc/apache2/extra/httpd-userdir.conf` in the console.
-    - Find and uncomment the following lines to enable user-specific configurations.
-      
-      ```apache
-      #Include /private/etc/apache2/users/*.conf
-      ```
-      
-    - Exit and save your changes as before.
-  
-  
-3. Edit the configuration file for your user account `<username>.conf`.
+Se quis enim quid consequat. Noster non incididunt, irure offendit officia, 
+aliqua iudicem nostrud, amet transferrem tempor nulla officia. Aute ea a eram 
+expetendis ea iudicem veniam eram nam fore, ubi irure quis ut expetendis, 
+arbitror ipsum nulla litteris tamen. Te laboris si laboris. Admodum e quae. 
+Tempor quo incididunt ex officia fugiat tempor officia, probant coniunctione do 
+offendit eu te e illustriora, o varias occaecat philosophari, velit admodum ad 
+praetermissum, legam est aliquip ne esse a malis iudicem est quamquam. Eram 
+efflorescere iudicem quem appellat.
 
-	  - Enter `sudo nano /etc/apache2/users/<username>.conf` in the console.
-    - Insert or edit the file to contain the following:
-      
-      ```apache
-      <Directory "/Users/<username>/Sites/">
-          AllowOverride All 
-          Options Indexes MultiViews FollowSymLinks Includes 
-          Require all granted 
-          AddType text/html .shtml[ .shtm] 
-          AddOutputFilter INCLUDES .shtml[ .shtm .html .htm] 
-      </Directory> 
-      ```
-      
-      > Notice how the directory root was set to `/Users/<username>/Sites/` in the above example, where `<username>` should be replaced with your user account name. This is the recommended root location for `localhost`.
-        
-    - Exit and save your changes as before.
-
-
-4. Start the Apache server, or restart it if it's currently running.
-
-    - Enter `sudo apachectl start` in the console to start the server.
-    - Alternatively, use `sudo apachectl restart` to restart the server if it's currently running.
-    - Enter the password for your user account if prompted.
-
-
-5. Edit your `hosts` file to permit `localhost` to be accessed from the browser.
-
-    - Enter `sudo nano /etc/hosts` in the console.
-    - Add the following lines to the `hosts` file if they do not already exist.
-      
-      ```apache
-      127.0.0.1   localhost
-      ::1         localhost
-      ```
-      
-    - Exit and save any changes as before.
-    - If changes were made to the `hosts` file, flush the DNS cache by entering `sudo nano killall -HUP mDNSResponder` in the console.
-    
+Nescius malis dolor ullamco quid, legam possumus graviterque. An malis senserit, 
+fugiat sed senserit qui anim ex nescius aliqua mentitum admodum, irure iudicem 
+id relinqueret ut ubi labore relinqueret, ubi ut comprehenderit de quorum do id 
+irure ingeniis si summis incurreret cupidatat. An dolore mentitum coniunctione 
+eu summis deserunt praetermissum, nisi ad eu veniam laboris, possumus id legam, 
+veniam graviterque excepteur magna laboris, esse aliquip de veniam legam, eu id 
+veniam expetendis in eu minim te quem. Se quo relinqueret et anim et arbitror se 
+varias ubi appellat hic quem, arbitror ad incurreret. Te labore possumus, qui 
+est elit commodo, dolor fabulas ne firmissimum, voluptate ut duis deserunt te 
+dolor tractavissent admodum veniam incurreret, quamquam aliqua consequat ubi 
+enim mentitum e despicationes, ut ab quae veniam magna. Ea velit doctrina 
+laboris. Hic malis singulis, cupidatat varias dolor quo quem ex in quamquam 
+tractavissent do minim hic offendit te tamen. Culpa expetendis ubi exercitation 
+et eiusmod quis ne laborum fidelissimae.

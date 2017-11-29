@@ -479,7 +479,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
         self.post = response.data;
 
         // Set title.
-        self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.post + self.post.meta.title);
+        self.setTitle(BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.post + self.post.meta.title);
 
         event.$emit('post:loaded');
         event.$emit('blog:event', 'post:loaded');
@@ -496,7 +496,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
         self.post = response.data;
 
         // Set title.
-        self.setTitle(BLOG_META.title + ' | ' + BLOG_META.prefix.post + self.post.meta.title);
+        self.setTitle(BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.post + self.post.meta.title);
 
         event.$emit('post:changed');
         event.$emit('blog:event', 'post:changed');

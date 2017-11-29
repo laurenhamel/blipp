@@ -457,7 +457,7 @@ let Post = Vue.component('post', {
       
       // Set title.
       self.setTitle( 
-        BLOG_META.title + ' | ' + BLOG_META.prefix.post +
+        BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.post +
         self.post.meta.title 
       );
       
@@ -480,7 +480,7 @@ let Post = Vue.component('post', {
       
       // Set title.
       self.setTitle( 
-        BLOG_META.title + ' | ' + BLOG_META.prefix.post +
+        BLOG_META.title + ' | ' + BLOG_ROUTER.prefix.post +
         self.post.meta.title
       );
       

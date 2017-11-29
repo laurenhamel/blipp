@@ -1,16 +1,10 @@
 {
-  "title": "My Blog",
+  "title": "Blipp Blog",
   "description": "This is a blog about stuff.",
   "owners": [
     "Lauren Hamel"
   ],
   "contributors": [
     "Cydney Goodwin"
-  ],
-  "prefix": {
-    "category": "~",
-    "tag": "#",
-    "author": "@",
-    "post": ""
-  }
+  ]
 }

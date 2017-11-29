@@ -1,8 +1,8 @@
 ---
 name: Cydney Goodwin
-title: Wellness Advocate
-email: cydney.goodwin@outlook.com
-website: //cydneyhamel.com
+title: Blipp Advocate
+email: cydney.goodwin@example.com
+website: //example.com
 
 linkedin: { link: true, username: cydneygoodwin }
 facebook: { link: false, id: 858265243, username: cydney.goodwin }

@@ -1,6 +1,6 @@
 ---
 name: Lauren Hamel
-title: Web Developer
+title: Web Developer & Blipp Creator
 email: lauren.hamel@outlook.com
 website: //laurenhamel.me
 
