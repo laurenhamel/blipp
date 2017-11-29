@@ -177,7 +177,8 @@ module.exports = function(grunt){
           ],
         },
         files: [
-          {expand: true, cwd: '.', src: ['*.html'], dest: '.'}
+          {expand: true, cwd: '.', src: ['*.html'], dest: '.'},
+          {expand: true, cwd: 'dist/', src: ['*.html'], dest: 'dist/'}
         ]
       },
       dist: {
@@ -240,9 +241,10 @@ module.exports = function(grunt){
           ],
         },
         files: [
-          {expand: true, cwd: '.', src: ['*.html'], dest: '.'}
+          {expand: true, cwd: '.', src: ['*.html'], dest: '.'},
+          {expand: true, cwd: 'dist/', src: ['*.html'], dest: 'dist/'}
         ]
-      }
+      },
     },
     copydeps: {
       dependencies: {
@@ -262,6 +264,14 @@ module.exports = function(grunt){
         cwd: 'src/',
         src: ['*.html'], 
         dest: '.'
+      },
+      integrate: {
+        options: {
+          includePath: 'src/includes/',
+        },
+        src: ['src/includes/blog.html', 'src/includes/foot.html', 'src/includes/head.html'],
+        dest: 'dist/',
+        flatten: true
       }
     },
     copy: {

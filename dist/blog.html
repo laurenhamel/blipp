@@ -1,0 +1,231 @@
+<main id="blog">
+  
+  <router-view></router-view>
+  
+</main>
+
+<template id="feed">
+  <div class="feed">
+      
+    <snippet v-for="(post, index) in posts" 
+             :post="post" 
+             :key="index"></snippet>
+    
+    <loading :loading="loading"></loading>
+    
+    <button class="button fetch"
+            v-if="more && !loading" 
+            @click="loadMore( 1000 )">
+      Load More
+    </button>
+    
+  </div>
+</template>
+
+<template id="snippet">
+  <div class="snippet" 
+       :class="[ post.meta.category ? 'category-' + $options.filters.id(post.meta.category) : '']">
+    
+    <div class="feature" v-if="post.meta.feature">
+      
+      <div class="image" :style="{ 'background-image': 'url(' + post.meta.feature + ')' }"></div>
+      
+      <div class="overlay"></div>
+    
+      <router-link v-if="post.meta.category" 
+                   tag="a"
+                   class="category"
+                   :to="'category/' + $options.filters.id(post.meta.category)">
+        {{post.meta.category}}
+      </router-link>
+      
+      <h1 class="heading">{{post.meta.title}}</h1>
+      
+    </div>
+    
+    <div class="content">
+    
+      <div class="description">{{post.meta.description}}</div>
+      
+      <ul class="tags" v-if="post.meta.tags">
+        <li v-for="tag in post.meta.tags" class="tag">
+          <router-link tag="a" :to="'/tag/' + $options.filters.id(tag)">
+            #{{tag | id}}
+          </router-link>
+        </li>
+      </ul>
+      
+      <router-link :to="'/post/' + post.id" 
+                   tag="a" 
+                   class="button more">
+        Read More
+      </router-link>
+      
+    </div>
+    
+  </div>
+</template>
+
+<template id="post">
+  <article class="post" 
+           :class="[ post.meta.category ? 
+                     'category-' + $options.filters.id(post.meta.category) : ''
+                   ]">
+    
+    <div class="feature">
+      <img class="image" :src="post.meta.feature">
+      <router-link tag="a" 
+                   :to="'/category/' + $options.filters.id(post.meta.category)"
+                   class="category">
+        {{post.meta.category}}
+      </router-link>
+    </div>
+    
+    <div class="content">
+      
+      <h1 class="heading">{{post.meta.title}}</h1>
+      
+      <div class="description" v-html="post.meta.description"></div >
+      
+      <div class="author">
+        By 
+        <ul v-if="post.meta.author instanceof Array">
+          <li v-for="author in post.meta.author">
+            <router-link tag="a" :to="'/author/' + $options.filters.id(author)">
+              {{author}}
+            </router-link>
+          </li>
+        </ul>
+        <span v-else>
+          <router-link :to="'/author/' + $options.filters.id(post.meta.author)">
+            {{post.meta.author}}
+          </router-link>
+        </span>
+      </div>
+
+      <div class="date">{{post.meta['created'] | date}}</div>
+      
+      <div class="body" v-html="post.html"></div>
+      
+      <ul class="tags">
+        <li v-for="tag in post.meta.tags" class="tag">
+          <router-link tag="a" :to="'/tag/' + $options.filters.id(tag)">
+            #{{tag | id}}
+          </router-link>
+        </li>
+      </ul>
+      
+      <ul class="share">
+        <li v-for="social in share">
+          <a :class="[social == 'email' ? 'fa-share' : 'soci-' + social]"
+             :href="shareURL( social, post.meta )"
+             :target="social == 'email' ? '' : '_blank'"></a>
+        </li>
+        <li>
+          <a class="fa-link copy" 
+             :data-clipboard-text="location.href"></a>
+        </li>
+      </ul>
+      
+    </div>
+
+  </article>
+</template>
+
+<template id="category">
+  <div class="feed category">
+      
+    <snippet v-for="(post, index) in posts" 
+             :post="post" 
+             :key="index"></snippet>
+    
+    <loading :loading="loading"></loading>
+    
+    <button class="button fetch"
+            v-if="more && !loading" 
+            @click="loadMore( 1000 )">
+      Load More
+    </button>
+    
+  </div>
+</template>
+
+<template id="tag">
+  <div class="feed tag">
+      
+    <snippet v-for="(post, index) in posts" 
+             :post="post" 
+             :key="index"></snippet>
+    
+    <loading :loading="loading"></loading>
+    
+    <button class="button fetch"
+            v-if="more && !loading" 
+            @click="loadMore( 1000 )">
+      Load More
+    </button>
+    
+  </div>
+</template>
+
+<template id="author">
+  <div class="author">
+    
+    <div class="about">
+      
+      <div class="portrait">
+        <img class="image" :src="getFbProfileImage()">
+      </div>
+    
+      <h1 class="name">{{about.meta.name}}</h1>
+      
+      <div class="title">{{about.meta.title}}</div>
+      
+      <ul class="social">
+        <li v-if="about.meta.website">
+          <a class="fa-globe"
+             :href="about.meta.website"
+             target="_blank"></a>
+        </li>
+        <li v-if="about.meta.email">
+          <a class="fa-envelope"
+             :href="'mailto:' + about.meta.email"></a>
+        </li>
+        <li v-for="social in socials" 
+            v-if="about.meta[social] && about.meta[social].link === true">
+          <a :class="'soci-' + social"
+             :href="socialURL(social, about.meta[social])"
+             :target="social == 'skype' ? '' : '_blank'"></a>
+        </li>
+      </ul>
+      
+      <div class="bio" v-if="about.html != ''" v-html="about.html"></div>
+      
+    </div>
+    
+    <div class="posts">
+      
+      <snippet v-for="post in posts" 
+             :post="post" 
+             :key="post"></snippet>
+    
+      <loading :loading="loading"></loading>
+    
+      <button class="button fetch"
+              v-if="more && !loading" 
+              @click="loadMore( 1000 )">
+        Load More
+      </button>
+    
+    </div>
+    
+  </div>
+</template>
+
+<template id="loading">
+  <div class="loading" v-if="loading">
+
+    <span class="spinner fa-spinner"></span>
+
+  </div>
+</template>
