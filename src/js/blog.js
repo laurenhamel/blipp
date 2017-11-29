@@ -420,8 +420,8 @@ let Post = Vue.component('post', {
       post: {
         config: {},
         meta: {
-          'date-created': {},
-          'date-modified': {}
+          'created': {},
+          'modified': {}
         },
         html: null,
         contents: null,
@@ -870,7 +870,7 @@ let router = new VueRouter({
       component: Feed, 
       props: { 
         limit: 10, 
-        sort: 'date-created',
+        sort: 'created',
         order: 'newest'
       } 
     },
@@ -883,7 +883,7 @@ let router = new VueRouter({
       component: Category, 
       props: { 
         limit: 10, 
-        sort: 'date-created',
+        sort: 'created',
         order: 'newest'
       }
     },
@@ -892,7 +892,7 @@ let router = new VueRouter({
       component: Tag, 
       props: { 
         limit: 10, 
-        sort: 'date-created',
+        sort: 'created',
         order: 'newest'
       }
     },
@@ -901,7 +901,7 @@ let router = new VueRouter({
       component: Author,
       props: {
         limit: 10,
-        sort: 'date-created',
+        sort: 'created',
         order: 'newest'
       }
     },

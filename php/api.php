@@ -10,7 +10,8 @@ require 'autoload.php';
 date_default_timezone_set('America/New_York');
 
 // Configure API.
-define( 'API_ROOT', dirname(dirname(__FILE__)).'/' );
+define( 'API_PATH', dirname(__FILE__).'/' );
+define( 'API_ROOT', dirname(API_PATH).'/' );
 define( 'API_ROUTER', file_get_contents(API_ROOT.'router.json') );
 define( 'API_META', file_get_contents(API_ROOT.'meta.json') );
 

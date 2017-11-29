@@ -3,8 +3,8 @@ title: This is My Second Official Blog Post
 description: This is a short description about this blog post.
 feature: //source.unsplash.com/random
 author: [Lauren Hamel, Cydney Goodwin]
-date-created: 11/07/2017 12:00PM
-date-modified: 11/08/2017 1:00AM
+created: 11/07/2017 12:00PM
+modified: 11/08/2017 1:00AM
 category: Web Design
 tags: [blog, web design, web development, markdown]
 ---

@@ -1,7 +1,7 @@
 <meta charset="UTF-8">
 
-<link rel="stylesheet" href="css/style.min.css">
-<link rel="stylesheet" href="css/dependencies/codemirror.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dependencies/codemirror.css">
 <script src="js/dependencies/clipboard.min.js"></script>
 <script src="js/dependencies/codemirror.min.js"></script>
 <script src="js/dependencies/jquery.min.js"></script>
@@ -114,7 +114,7 @@
         </span>
       </div>
       
-      <div class="date">{{post.meta['date-created'].date | date}}</div>
+      <div class="date">{{post.meta['created'].date | date}}</div>
       
       <div class="body" v-html="post.html"></div>
       
@@ -241,4 +241,5 @@
   </div>
 </template>
   
-<script src="js/blog.min.js"></script>
+<script src="js/blog.js"></script>
+<script src="//localhost:35729/livereload.js"></script>

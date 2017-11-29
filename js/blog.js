@@ -448,8 +448,8 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
         post: {
           config: {},
           meta: {
-            'date-created': {},
-            'date-modified': {}
+            'created': {},
+            'modified': {}
           },
           html: null,
           contents: null,
@@ -830,7 +830,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       component: Feed,
       props: {
         limit: 10,
-        sort: 'date-created',
+        sort: 'created',
         order: 'newest'
       }
     }, {
@@ -841,7 +841,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       component: Category,
       props: {
         limit: 10,
-        sort: 'date-created',
+        sort: 'created',
         order: 'newest'
       }
     }, {
@@ -849,7 +849,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       component: Tag,
       props: {
         limit: 10,
-        sort: 'date-created',
+        sort: 'created',
         order: 'newest'
       }
     }, {
@@ -857,7 +857,7 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       component: Author,
       props: {
         limit: 10,
-        sort: 'date-created',
+        sort: 'created',
         order: 'newest'
       }
     }, {

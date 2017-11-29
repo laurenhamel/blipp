@@ -9,18 +9,6 @@ class Markdown {
     'date' => [
       'long'        => 'F j, Y',
       'short'       => 'm.d.Y',
-      'created'     => 'date-created',
-      'modified'    => 'date-modified',
-    ],
-    'icon'   => [
-      'fontawesome' => 'fa',
-      'ionicons'    => 'ion',
-      'socicon'     => 'soci'
-    ],
-    'video' => [
-      'youtube'     => '//www.youtube.com/embed/:id',
-      'vimeo'       => '//player.vimeo.com/video/:id',
-      'vevo'        => '//embed.vevo.com?isrc=:id'
     ]
   ];
   public $id;
@@ -28,60 +16,74 @@ class Markdown {
   public $frontmatter;
   public $markdown;
   public $html;
+  public $extensions = [];
   
   function __construct( $path ) {
-    
+
     $this->path = $path;
     $this->filename = basename($this->path);
     $this->id = filename_id( $this->filename );
     $this->contents = file_get_contents($this->path);
-    $this->parse_frontmatter();
-    $this->parse_markdown();
+    $this->registerExtensions();
+    $this->parseFrontmatter();
+    $this->parseMarkdown();
     
   }
   
-  private function mustache_methods() {
+  private function getDatesFromMeta( $meta ) {
+    
+    $dates = [];
+    
+    foreach($meta as $key => $value) {
+      
+      if( $value instanceof Moment ) $dates[$key] = $value;
+      
+    }
+    
+    return $dates;
+    
+  }
+  
+  private function newDateMethod( $date, $format ) {
+    return function() use ( $date, $format ) {
+      
+      if( !$date ) return;
+      else return $date->format($format);
+        
+    };
+  }
+  
+  private function setDateMethods( $dates ) {
+    
+    $methods = [];
+    
+    foreach($this->config['date'] as $name => $format) {
+      
+      $result = [];
+      
+      foreach($dates as $key => $date) {
+      
+        $result[$key] = $this->newDateMethod( $date, $format );
+        
+      }
+      
+      $methods[$name] = $result;
+      
+    }
+    
+    return $methods;
+    
+  }
+  
+  private function setMustacheMethods( $meta ) {
     
     return [
-      'date'         => [
-        'long'        => [
-          'created'   => function(){
-            
-            if( !($date = $this->meta[$this->config['date']['created']]) ) return;
-            
-            else return $date->format($this->config['date']['long']);
-            
-          },
-          'modified'  => function(){
-
-            if( !($date = $this->meta[$this->config['date']['modified']]) ) return;
-            
-            else return $date->format($this->config['date']['long']);
-            
-          },
-        ],
-        'short'       => [
-          'created'   => function(){
-            
-            if( !($date = $this->meta[$this->config['date']['created']]) ) return;
-            
-            else return $date->format($this->config['date']['short']);
-
-          },
-          'modified'  => function(){
-            
-            if( !($date = $this->meta[$this->config['date']['modified']]) ) return;
-            
-            else return $date->format($this->config['date']['short']);
-
-          },
-        ]
-      ]
+      'date'    => $this->setDateMethods( $this->getDatesFromMeta( $meta ) ) 
     ];
     
   }
   
-  private function frontmatter_type( $string ) {
+  private function formatFrontmatter( $string ) {
     
     // Handle strings only
     if( gettype($string) !== 'string' ) return $string;
@@ -93,7 +95,7 @@ class Markdown {
 
       foreach( $string as $key => &$value ) {
 
-        $string[$key] = $this->frontmatter_type( $value );
+        $string[$key] = $this->formatFrontmatter( $value );
 
       }
 
@@ -143,100 +145,62 @@ class Markdown {
     
   }
   
-  private function markdown_extended( $string ) {
+  private function registerExtensions() {
     
-    $config = $this->config;
+    $path = API_PATH.'/extensions/';
     
-    $extensions = [
-      
-      // Icon: ${prefix}-{icon}
-      'icon'    => function( $data ) use ( $config ) {
-     
-        $template = '<span class=":prefix-:icon"></span>';
- 
-        foreach( $config['icon'] as $set => $prefix ) {
-
-          if( preg_match("/\\$($prefix)-([a-z-]+)/i", $data, $match) ) {
-            
-            $data = str_replace(
-              $match[0], 
-              str_replace(
-                [':prefix', ':icon'], 
-                [$match[1], $match[2]], 
-                $template
-              ),
-              $data
-            );
-            
-          }
-          
-        }
-        
-        return $data;
-        
-      },
-      
-      // Videos: ![{alt}]({source}:{id})
-      'video'   => function( $data ) use( $config ) {
-        
-        $template = '<iframe src=":src" width=":width" height=":height" '.
-                    'allowfullscreen frameborder="0">:alt</iframe>';
- 
-        foreach( $config['video'] as $source => $src ) {
-
-          if( preg_match("/!\[(.*)\]\($source:(.+?)(?: (\d+)x(\d+))?\)/i", $data, $match) ) {
-            
-            $width = $match[3] ?: 560;
-            $height = $match[4] ?: 315;
-            
-            $data = str_replace(
-              $match[0], 
-              str_replace(
-                [':src', ':width', ':height', ':alt'], 
-                [str_replace(':id', $match[2], $src), $width, $height, $match[1]], 
-                $template
-              ),
-              $data
-            );
-            
-          }
-          
-        }
-        
-        return $data;
-        
-      }
-      
-    ];
+    $extensions = array_values(array_filter(scandir($path), function( $item ){
+      return !preg_match('/^\.+$/', $item);
+    }));
     
-    foreach( $extensions as $type => $function ){
+    foreach($extensions as $extension){
+      
+      $name = str_replace('.php', '', $extension);
+      
+      $this->extensions[$name] = include $path.$extension;
+      
+    }
+    
+  }
+  
+  private function applyExtensions( $string ) {
+    
+    foreach( $this->extensions as $type => $function ){
       
       $string = $function( $string );
      
     }
-    
+   
     return $string;
     
   }
   
-  private function parse_frontmatter(){
+  private function parseFrontmatter(){
+    
+    // Define some regular expressions.
+    $regex = [
+      'frontmatter' => '/---(?:\S|\s)*---/',
+      'linebreak'   => '/\r*\n+|\r+/',
+      'delimiter'   => '/---/',
+      'separator'   => '/:/'
+    ];
     
     // Extract
-    preg_match('/---(?:\S|\s)*---/', $this->contents, $match);
+    preg_match($regex['frontmatter'], $this->contents, $match);
     
     // Save
     $this->frontmatter = $frontmatter = $match[0];
     
-    // Reformat
-    $frontmatter = array_map(function($pair){
+    // Interpret
+    $frontmatter = array_map(function($pair) use ($regex){
       
-      $array = array_map('trim', preg_split('/:/', $pair, 2));
+      $array = array_map('trim', preg_split($regex['separator'], $pair, 2));
 
       return $array;
       
     }, array_filter( preg_split(
       
-        '/\r*\n+|\r+/', trim( preg_replace('/---/', '', $frontmatter) )
+        $regex['linebreak'], trim( preg_replace($regex['delimiter'], '', $frontmatter) )
       
       ), function($item){
       
@@ -244,10 +208,10 @@ class Markdown {
       
     }));
     
-    // Typeify
+    // Format
     foreach( $frontmatter as &$meta ) { 
       
-      $meta[1] = $this->frontmatter_type( $meta[1] );
+      $meta[1] = $this->formatFrontmatter( $meta[1] );
   
     }
     
@@ -265,13 +229,13 @@ class Markdown {
     // Save
     $this->meta = array_merge(
       $frontmatter, 
-      $this->mustache_methods()
+      $this->setMustacheMethods( $frontmatter )
     );
     $this->slug = slug_id( $this->meta['title'] );
 
   }
   
-  private function parse_markdown(){
+  private function parseMarkdown(){
     
     // Extract
     $this->markdown = preg_replace('/---(?:\S|\s)*---/', '', $this->contents);
@@ -280,7 +244,7 @@ class Markdown {
     $Parsedown = new Parsedown();
     $Mustache = new Mustache();
     $this->html = $Parsedown->text( 
-      $this->markdown_extended(
+      $this->applyExtensions(
         $Mustache->render($this->markdown, $this->meta) 
       )
     );
