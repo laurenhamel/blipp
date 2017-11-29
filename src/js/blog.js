@@ -1,5 +1,5 @@
 // Set root path.
-const ROOT_PATH = '/markdown-blog/';
+const ROOT_PATH = location.origin + location.pathname;
 
 // Load JSON data.
 $.when(
@@ -1118,6 +1118,8 @@ let Blog = new Vue({
       
       setup() {
         
+        var path = ROOT_PATH + BLOG_ROUTER.dependencies.js + 'codemirror/';
+        
         $('pre > code').each((index, element) => { 
 
           var data = codemirror.interpret( element );
@@ -1128,7 +1130,7 @@ let Blog = new Vue({
             
             $(document).queue('codemirror', (next) => {
               
-              $.getScript('js/dependencies/codemirror/' + data.language + '.js').then(() => { 
+              $.getScript(path + data.language + '.js').then(() => { 
               
                 codemirror.parse(element, data);
                 

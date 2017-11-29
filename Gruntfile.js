@@ -2,7 +2,7 @@ module.exports = function(grunt){
   
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    pkgconfig: grunt.file.readJSON('package-config.json'),
+    pkgconfig: grunt.file.readJSON('config.json'),
     watch: {
       options: { livereload: true },
       startup: {
@@ -31,7 +31,7 @@ module.exports = function(grunt){
           'Gruntfile.js', 
           'package.json', 
           'composer.json', 
-          'package-config.json',
+          'config.json',
           '.jshintrc',
           '.babelrc'
         ],
@@ -51,7 +51,7 @@ module.exports = function(grunt){
             expand: true,
             cwd: 'src/js/',
             src: ['**/*.js'],
-            dest: 'dist/js/'
+            dest: 'js/'
           }
         ]
       }
@@ -60,13 +60,13 @@ module.exports = function(grunt){
       dev: {
         options: { style: 'expanded', noCache: true, update: true, sourcemap: 'none' },
         files: [
-          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'dist/css/', ext: '.css' }
+          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'css/', ext: '.css' }
         ]
       },
       dist: {
         options: { style: 'compressed', noCache: true, sourcemap: 'none' },
         files: [
-          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'dist/css/', ext: '.css' }
+          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'css/', ext: '.css' }
         ]
       }
     },
@@ -75,7 +75,7 @@ module.exports = function(grunt){
         processors: [ require('autoprefixer')({ browsers: ['last 2 versions'] }) ]
       },
       dist: {
-        src: ['dist/css/**/*.css']
+        src: ['css/**/*.css']
       }
     },
     cssmin: {
@@ -83,7 +83,7 @@ module.exports = function(grunt){
         files: [
         { 
           expand: true, 
-          src: ['dist/css/**/*.css', '!dist/css/**/*.min.css'], 
+          src: ['css/**/*.css', '!css/**/*.min.css'], 
           dest: '.',
           ext: '.min.css'
         }
@@ -104,11 +104,11 @@ module.exports = function(grunt){
             expand: true, 
             cwd: '.', 
             src: [
-              'dist/js/**/*.js', 
-              '!dist/js/**/*.min.js',
-              '!dist/js/**/moment.js',
-              '!dist/js/**/vue.js',
-              '!dist/js/dependencies/codemirror/*.js',
+              'js/**/*.js', 
+              '!js/**/*.min.js',
+              '!js/**/moment.js',
+              '!js/**/vue.js',
+              '!js/dependencies/codemirror/*.js',
             ],
             dest: '.', 
             ext: '.min.js' 
@@ -134,7 +134,7 @@ module.exports = function(grunt){
                   
                 });
                 
-                return css.join("\n  ");
+                return css.join("\n");
                 
               }
             },
@@ -150,7 +150,7 @@ module.exports = function(grunt){
                   
                 });
                 
-                return js.join("\n  ");
+                return js.join("\n");
                 
               }
             },
@@ -166,7 +166,7 @@ module.exports = function(grunt){
                   
                 });
                 
-                return dep.join("\n  ");
+                return dep.join("\n");
                 
               }
             },
@@ -177,7 +177,7 @@ module.exports = function(grunt){
           ],
         },
         files: [
-          {expand: true, cwd: 'dist/', src: ['*.html'], dest: 'dist/'}
+          {expand: true, cwd: '.', src: ['*.html'], dest: '.'}
         ]
       },
       dist: {
@@ -197,7 +197,7 @@ module.exports = function(grunt){
                   
                 });
                 
-                return css.join("\n  ");
+                return css.join("\n");
                 
               }
             },
@@ -213,7 +213,7 @@ module.exports = function(grunt){
                   
                 });
                 
-                return js.join("\n  ");
+                return js.join("\n");
                 
               }
             },
@@ -229,7 +229,7 @@ module.exports = function(grunt){
                   
                 });
                 
-                return dep.join("\n  ");
+                return dep.join("\n");
                 
               }
             },
@@ -240,7 +240,7 @@ module.exports = function(grunt){
           ],
         },
         files: [
-          {expand: true, cwd: 'dist/', src: ['*.html'], dest: 'dist/'}
+          {expand: true, cwd: '.', src: ['*.html'], dest: '.'}
         ]
       }
     },
@@ -251,7 +251,7 @@ module.exports = function(grunt){
           minified: true
         },
         pkg: 'package.json',
-        dest: 'dist/js/dependencies/'
+        dest: 'js/dependencies/'
       }
     },
     includes: {
@@ -261,19 +261,19 @@ module.exports = function(grunt){
         },
         cwd: 'src/',
         src: ['*.html'], 
-        dest: 'dist/'
+        dest: '.'
       }
     },
     copy: {
       php: {
         files: [
-          { expand: true, cwd: 'src/php', src: ['**/*.php'], dest: 'dist/php' }
+          { expand: true, cwd: 'src/php', src: ['**/*.php'], dest: 'php' }
         ]
       },
       assets: {
         files: [
-          { expand: true, cwd: 'src/images/', src: ['**'], dest: 'dist/images' },
-          { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'dist/fonts' }
+          { expand: true, cwd: 'src/images/', src: ['**'], dest: 'images' },
+          { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'fonts' }
         ]
       },
       dependencies: {
@@ -282,22 +282,36 @@ module.exports = function(grunt){
             expand: true, 
             cwd: 'node_modules/codemirror/lib/', 
             src: ['codemirror.css'], 
-            dest: 'dist/css/dependencies' 
+            dest: 'css/dependencies' 
           },
           { 
             expand: true, 
             flatten: true,
             cwd: 'node_modules/codemirror/mode/', 
             src: ['**/*.js'], 
-            dest: 'dist/js/dependencies/codemirror/' 
+            dest: 'js/dependencies/codemirror/' 
           },
         ]
       }
     },
     clean: {
-      all: ['dist/'],
-      unminjs: ['dist/js/**/*.js', '!dist/js/**/*.min.js', '!dist/js/dependencies/codemirror/*.js'],
-      unmincss: ['dist/css/**/*.css', '!dist/css/**/*.min.css']
+      all: [
+        'js/', 
+        'css/',
+        'images/',
+        'fonts/',
+        'php/',
+        '*.html'
+      ],
+      unminjs: [
+        'dist/js/**/*.js', 
+        '!dist/js/**/*.min.js', 
+        '!dist/js/dependencies/codemirror/*.js'
+      ],
+      unmincss: [
+        'dist/css/**/*.css', 
+        '!dist/css/**/*.min.css'
+      ]
     }
   });
   
