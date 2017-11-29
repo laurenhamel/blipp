@@ -112,7 +112,7 @@ class Markdown {
 
       foreach( $string as $index => $array ) {
         
-        $string[$array[0]] = $this->frontmatter_type( $array[1] );
+        $string[$array[0]] = $this->formatFrontmatter( $array[1] );
         
         unset($string[$index]);
         
