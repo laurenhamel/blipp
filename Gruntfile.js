@@ -2,7 +2,7 @@ module.exports = function(grunt){
   
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    pkgconfig: grunt.file.readJSON('config.json'),
+    pkgconfig: grunt.file.readJSON('package-config.json'),
     watch: {
       options: { livereload: true },
       startup: {
@@ -31,7 +31,7 @@ module.exports = function(grunt){
           'Gruntfile.js', 
           'package.json', 
           'composer.json', 
-          'config.json',
+          'package-config.json',
           '.jshintrc',
           '.babelrc'
         ],
