@@ -1,7 +1,7 @@
 {
-  "name": "markdown-blog",
+  "name": "blipp",
   "version": "1.0.0",
-  "description": "A dynamic markdown blogging system",
+  "description": "A dynamic markdown blogging system with its very own API",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,9 +19,9 @@
   "author": "Lauren Hamel",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/laurenhamel/markdown-blog/issues"
+    "url": "https://github.com/laurenhamel/blipp/issues"
   },
-  "homepage": "https://github.com/laurenhamel/markdown-blog#readme",
+  "homepage": "https://github.com/laurenhamel/blipp#readme",
   "devDependencies": {
     "autoprefixer": "^7.1.6",
     "babel-core": "^6.26.0",
