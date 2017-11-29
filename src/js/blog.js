@@ -198,9 +198,11 @@ const filters = {
   
   date( value, format = 'MMMM d, YYYY' ) {
     
-    var date = moment( value );
+    if( !value ) return null;
     
-    return date.isValid() ? date.format( format ) : value;
+    var date = moment( value.date );
+    
+    return date.isValid() ? date.format( format ) : null;
     
   }
   

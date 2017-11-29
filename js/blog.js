@@ -237,9 +237,11 @@ $.when($.getJSON(ROOT_PATH + 'meta.json').then(function (data) {
       var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'MMMM d, YYYY';
 
 
-      var date = moment(value);
+      if (!value) return null;
 
-      return date.isValid() ? date.format(format) : value;
+      var date = moment(value.date);
+
+      return date.isValid() ? date.format(format) : null;
     }
   };
   var methods = {
