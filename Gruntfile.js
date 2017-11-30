@@ -38,9 +38,13 @@ module.exports = function(grunt){
         tasks: ['jshint:config', 'startup'],
         options: { reload: true }
       },
-      blog: {
-        files: ['posts/**/*', 'drafts/**/*', 'authors/**/*', 'router.json', 'meta.json'],
-        tasks: ['includes', 'replace:dev']
+      assets: {
+        files: ['src/images/**/*', 'src/fonts/**/*'],
+        tasks: ['copy:assets']
+      },
+      test: {
+        files: ['test/**/*', 'test/.htaccess'],
+        tasks: ['includes', 'replace:dev', 'copy:test']
       }
     },
     babel: {
@@ -51,7 +55,7 @@ module.exports = function(grunt){
             expand: true,
             cwd: 'src/js/',
             src: ['**/*.js'],
-            dest: 'js/'
+            dest: 'demo/js/'
           }
         ]
       }
@@ -60,13 +64,13 @@ module.exports = function(grunt){
       dev: {
         options: { style: 'expanded', noCache: true, update: true, sourcemap: 'none' },
         files: [
-          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'css/', ext: '.css' }
+          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'demo/css/', ext: '.css' }
         ]
       },
       dist: {
         options: { style: 'compressed', noCache: true, sourcemap: 'none' },
         files: [
-          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'css/', ext: '.css' }
+          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'demo/css/', ext: '.css' }
         ]
       }
     },
@@ -75,7 +79,7 @@ module.exports = function(grunt){
         processors: [ require('autoprefixer')({ browsers: ['last 2 versions'] }) ]
       },
       dist: {
-        src: ['css/**/*.css']
+        src: ['demo/css/**/*.css']
       }
     },
     cssmin: {
@@ -83,7 +87,7 @@ module.exports = function(grunt){
         files: [
         { 
           expand: true, 
-          src: ['css/**/*.css', '!css/**/*.min.css'], 
+          src: ['demo/css/**/*.css', '!demo/css/**/*.min.css'], 
           dest: '.',
           ext: '.min.css'
         }
@@ -104,11 +108,11 @@ module.exports = function(grunt){
             expand: true, 
             cwd: '.', 
             src: [
-              'js/**/*.js', 
-              '!js/**/*.min.js',
-              '!js/**/moment.js',
-              '!js/**/vue.js',
-              '!js/dependencies/codemirror/*.js',
+              'demo/js/**/*.js', 
+              '!demo/js/**/*.min.js',
+              '!demo/js/**/moment.js',
+              '!demo/js/**/vue.js',
+              '!demo/js/dependencies/codemirror/*.js',
             ],
             dest: '.', 
             ext: '.min.js' 
@@ -177,7 +181,7 @@ module.exports = function(grunt){
           ],
         },
         files: [
-          {expand: true, cwd: '.', src: ['*.html'], dest: '.'},
+          {expand: true, cwd: 'demo/', src: ['*.html'], dest: 'demo/'},
           {expand: true, cwd: 'dist/', src: ['*.html'], dest: 'dist/'}
         ]
       },
@@ -241,7 +245,7 @@ module.exports = function(grunt){
           ],
         },
         files: [
-          {expand: true, cwd: '.', src: ['*.html'], dest: '.'},
+          {expand: true, cwd: 'demo/', src: ['*.html'], dest: 'demo/'},
           {expand: true, cwd: 'dist/', src: ['*.html'], dest: 'dist/'}
         ]
       },
@@ -253,7 +257,7 @@ module.exports = function(grunt){
           minified: true
         },
         pkg: 'package.json',
-        dest: 'js/dependencies/'
+        dest: 'demo/js/dependencies/'
       }
     },
     includes: {
@@ -263,7 +267,7 @@ module.exports = function(grunt){
         },
         cwd: 'src/',
         src: ['*.html'], 
-        dest: '.'
+        dest: 'demo/'
       },
       integrate: {
         options: {
@@ -275,15 +279,20 @@ module.exports = function(grunt){
       }
     },
     copy: {
+      test: {
+        files: [
+          { expand: true, cwd: 'test/', src: ['**/*'], dest: 'demo/', dot: true }
+        ]
+      },
       php: {
         files: [
-          { expand: true, cwd: 'src/php', src: ['**/*.php'], dest: 'php' }
+          { expand: true, cwd: 'src/php', src: ['**/*.php'], dest: 'demo/php' }
         ]
       },
       assets: {
         files: [
-          { expand: true, cwd: 'src/images/', src: ['**'], dest: 'images' },
-          { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'fonts' }
+          { expand: true, cwd: 'src/images/', src: ['**'], dest: 'demo/images' },
+          { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'demo/fonts' }
         ]
       },
       dependencies: {
@@ -292,35 +301,33 @@ module.exports = function(grunt){
             expand: true, 
             cwd: 'node_modules/codemirror/lib/', 
             src: ['codemirror.css'], 
-            dest: 'css/dependencies' 
+            dest: 'demo/css/dependencies' 
           },
           { 
             expand: true, 
             flatten: true,
             cwd: 'node_modules/codemirror/mode/', 
             src: ['**/*.js'], 
-            dest: 'js/dependencies/codemirror/' 
+            dest: 'demo/js/dependencies/codemirror/' 
           },
+        ]
+      },
+      dist: {
+        files: [
+          { expand: true, cwd: 'demo/', src: ['**/*', '!index.html'], dest: 'dist' }
         ]
       }
     },
     clean: {
-      all: [
-        'js/', 
-        'css/',
-        'images/',
-        'fonts/',
-        'php/',
-        '*.html'
-      ],
+      all: ['demo/', 'dist/'],
       unminjs: [
-        'dist/js/**/*.js', 
-        '!dist/js/**/*.min.js', 
-        '!dist/js/dependencies/codemirror/*.js'
+        'demo/js/**/*.js', 
+        '!demo/js/**/*.min.js', 
+        '!demo/js/dependencies/codemirror/*.js'
       ],
       unmincss: [
-        'dist/css/**/*.css', 
-        '!dist/css/**/*.min.css'
+        'demo/css/**/*.css', 
+        '!demo/css/**/*.min.css'
       ]
     }
   });
@@ -337,7 +344,7 @@ module.exports = function(grunt){
   grunt.loadNpmTasks('grunt-postcss');
   grunt.loadNpmTasks('grunt-includes');
   grunt.loadNpmTasks('grunt-babel');
-  
+
   grunt.registerTask('default', ['dev']);
   grunt.registerTask('startup', [
     'copydeps',
@@ -346,7 +353,10 @@ module.exports = function(grunt){
     'jshint',
     'babel',
     'uglify',
-    'copy',
+    'copy:test',
+    'copy:php',
+    'copy:assets',
+    'copy:dependencies',
     'includes',
     'replace:dev'
   ]);
@@ -356,7 +366,10 @@ module.exports = function(grunt){
     'copydeps',
     'sass:dist',
     'postcss',
-    'copy',
+    'copy:test',
+    'copy:php',
+    'copy:assets',
+    'copy:dependencies',
     'cssmin',
     'babel',
     'uglify',
@@ -364,6 +377,7 @@ module.exports = function(grunt){
     'replace:dist',
     'clean:unminjs',
     'clean:unmincss',
+    'copy:dist'
   ]);
   
 };

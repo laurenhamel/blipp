@@ -1,0 +1,17 @@
+{
+  "posts": "posts/",
+  "drafts": "drafts/",
+  "authors": "authors/",
+  "feed": "feed/",
+  "api": "api/",
+  "dependencies": {
+    "js": "js/dependencies/",
+    "css": "css/dependencies/"
+  },
+  "prefix": {
+    "category": "~",
+    "tag": "#",
+    "author": "@",
+    "post": ""
+  }
+}

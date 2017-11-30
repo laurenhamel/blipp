@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /
+
+# Set URL of API root.
+RewriteCond %{HTTP_HOST} ^(www\.)?localhost$ [NC]
+RewriteCond %{REQUEST_URI} ^/blipp/demo/api(\.php)?/(.*)$ [NC]
+RewriteRule ^api/(.*)$ /blipp/demo/php/api/$1 [QSA]
