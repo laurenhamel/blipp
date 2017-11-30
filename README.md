@@ -1,14 +1,14 @@
 # Blipp
 
-Blipp is a pluggable markdown blog built on top of its very own API. It's designed to make blogging super simple for the common people while still offering techies a high level of scalability and extensibility all in an easy-to-use package, and it's intended to be "plugged in" to any new or existing site with ease. 
+Blipp is a pluggable markdown blog built on top of its very own API. It's designed to make blogging super simple for the common people while still offering techies a high level of scalability and extensibility all in an easy-to-use package. It's intended to be "plugged in" to any new or existing site with ease.
 
 ## How It Works
 
-Blipp is databaseless. Instead, it relies entirely on your blog's file system, where publishing a new post is as easy as uploading a new markdown file to your blog's post directory. Blipp uses **Markdown** as its preferred method of formatting for its ease of use and writing flow combined with its web compatability. For more information on how Blipp operates and what's powering the blogging system, read [Behind the Scenes](//github.com/laurenhamel/blipp/wiki/Behind-the-Scenes).
+Blipp is databaseless. Instead, it relies entirely on your blog's file system, where publishing a new post is as easy as uploading a new markdown file to your blog's post directory. Blipp uses **Markdown** as its preferred method of formatting for its ease of use and writing flow combined with its web compatability. Bloop also comes with it's own public API, making data retrieval sophisticated yet effortless. For more information on how Blipp operates and what's powering the blogging system, read [Behind the Scenes](//github.com/laurenhamel/blipp/wiki/Behind-the-Scenes).
 
 ## What is Markdown
 
-Markdown is a formatting syntax designed for use alongside plain text. Its syntax is simple and memorable, and writers tend to like it because it makes express one's thoughts easier and more streamlined without the worry of distractions or disruptions in workflow. Markdown also allows its users to know very little about actual web-based markup, making it an ideal solution for individuals from all backgrounds. For a detailed guide on the Markdown syntax rules supported by Blipp, refer to the [Markdown Cheatsheet](//github.com/laurenhamel/blipp/wiki/Markdown-Cheatsheet).
+Markdown is a formatting syntax designed for use alongside plain text. Its syntax is simple and memorable, and writers tend to find that it makes expressing one's thoughts easier and more free flowing without the worry of distractions or disruptions in workflow. Markdown also allows its users to know very little about actual web-based markup, making it an ideal solution for individuals from all backgrounds to start blogging in an instant. For a detailed guide on the Markdown syntax rules supported by Blipp, refer to the [Markdown Cheatsheet](//github.com/laurenhamel/blipp/wiki/Markdown-Cheatsheet).
 
 ## Getting Started
 
@@ -21,13 +21,13 @@ Markdown is a formatting syntax designed for use alongside plain text. Its synta
 
 ### Installing Blipp
 
-Blipp is capable of running on top of your traditional server environment. As long as PHP is up and running within your environment, setup is a breeze. Simply follow the steps below:
+Blipp is capable of running on top of a traditional server environment. As long as PHP is up and running within your environment, setup is a breeze. Simply follow the steps below:
 
 1. Download the [latest release](/releases/latest) of Blipp.
 2. Extract the zip (`.zip`) file once downloaded.
 3. If you wish to customize your instance of Blipp, refer to [Customizing Blipp](#customizing-blipp).
 4. Follow the steps in the section on [Configuring Blipp](#configuring-blipp).
-5. Integrate your Blipp into your site by following the instructions on [Integrating Blipp](#integrating-blipp).
+5. Integrate Blipp into your site by following the instructions on [Integrating Blipp](#integrating-blipp).
 
 ### Customizing Blipp
 
@@ -104,7 +104,7 @@ Blipp comes with its very own API, which was designed to be fairly extensible. I
 
 ### Configuring Blipp
 
-Prior to plugging Blipp into your site, you'll need to make a few configurations to Blipp that will be specific to your blog setup. Blipp uses a set of JSON files along with an optional `.htaccess` for configuration. The first JSON file is `meta.json`, which is used to store meta data about your blog. At the very least, all blogs should contain a title (string), description (string), owners (array), contributors (array). If you are [Customizing Blipp](#customizing-blipp), you also may wish to add some additional meta data to suite your particular needs. 
+Prior to plugging Blipp into your site, you'll need to make a few configurations that will be specific to your blog setup. Blipp uses a set of JSON files along with an optional `.htaccess` for configuration. The first JSON file is `meta.json`, which is used to store meta data about your blog. At the very least, all blogs should contain a title (string), description (string), owners (array), contributors (array). If you are [Customizing Blipp](#customizing-blipp), you also may wish to add some additional meta data to suite your particular needs. 
 
 The second JSON file is `router.json`, which is used to identify the routes, or paths, to relevant directories that Blipp relies. In addition to route definitions, the `router.js` is also used to define the prefixes that get added to various page titles when users navigate to that specific page type. For instance, if a user visits the tag feed of your blog, by default, the page's title will read `<blog_title> | #<tag>`, where `<blog_title>` is the name of your blog as defined in the `meta.json` file, `#` is the prefix, and `<tag>` is the equivalent tag name.
 
@@ -133,39 +133,38 @@ RewriteRule ^(.*)$ http://<real_path_to_api>/$1 [QSA]
 
 The key difference to note in the above example is that there is that the former `www` should be replaced with your vanity `<subdomain_name>`. Additionally, if you wish to create a redirect to any of the above addresses, you can also replace `[QSA]` in the last line with `[R=301,QSA]`, which will create a permanent redirect to the given location.
 
+Whether or not you use an `.htaccess` file, or any other form of generating a vanity URL to point to your blog's PSI is largely up to you. While it helps to make your API's endpoints a bit more memorable, it's certainly not mandatory. If you opt against this approach, you'll simply need to update your the path tour blog's API file (`api.php`) within your `router.json`.
+
 ### Integrating Blipp
 
-Blipp is designed to be "pluggable", meaning that you can easily plug it in to any new or existing site. Integrating Blipp into a site simply requires that the necessary HTML, JS, CSS, PHP, and assets be copied over to your server. Below is an outline of the folders and files that you will need to plug in:
+Blipp is designed to be "pluggable", meaning that you can easily plug it in to any new or existing site. Integrating Blipp into a site simply requires that the necessary HTML, JS, CSS, PHP, and other assets be copied over to your server. This also means that Blipp is not intended to server as your blog in and of itself, but rather, it's meant to be inserted somewhere within your site. Below is a step-by-step guide on how to fully integrate Blipp into your blog site.
 
-```
-+ authors/
-|
-+ css/
-+--- ...
-|
-+ fonts/
-+--- ...
-|
-+ dist/
-+--- blog.html
-+--- foot.html
-+--- head.html
-|
-+ js/
-+--- ...
-|
-+ meta.json
-| 
-+ php/
-+--- ...
-|
-+ posts/
-+--- ...
-|
-+ router.json
-```
+1. Upload the following files to the root directory of your blog site.
 
-The `js/`, `css/`, `fonts/`, and `php/` folders along with the `router.json` and `meta.json` files should be uploaded directly to the root of your blog site unless you have made customizations to your Blipp structure that otherwise affects this placement (see [Customizing Blipp](#customizing-blipp)). The `authors/`, `drafts/`, and `posts/` folders should be placed in the locations specified by your `router.json`. If you did not make any modifications to your `router.json` file, then, by default, these directors should be placed at the root of your blog site as well.
+  - `meta.json` 
+  - `router.json`
 
-Lastly, to finish integrating Blipp into your site, you'll need to plug in the markup contained within the HTML files in the `dist/` folder into your blog site's HTML. In other words, you'll need to copy the contents of the files inside the `dist/` folder and paste that markup somewhere within your site. The `head.html` file contains some markup that should be placed within the `<head>` section of a page. The `foot.html` file contains some markup that should be placed just before the closing `</body>` tag within a page, and the `blog.html` file contains the actual markup to get your blog up and running. That's it.
+  > Note, if you made any customizations during the [Customizing Blipp](#customizing-blipp) stage that affects the intended placement of these files, you will need to move these files accordingly to their target location.
 
+2. Upload the following folders to the root director of your blog site.
+
+  - `css/`
+  - `js/`
+  - `php/`
+  - `fonts/`
+
+  > Note, if you made any customizations during the [Customizing Blipp](#customizing-blipp) stage that affects the intended placement of these files, you will need to move these folders accordingly to their target location.
+
+3. Create the following folders at the destinations specified in your `router.json` file.
+
+  - `authors/`
+  - `drafts/`
+  - `posts/`
+
+  > By default, if you did not make any changes to the `router.json` file during the [Configuring Blipp](#configuring-blipp) stage, these folders should be created within the root directory of your blog site.
+
+4. Copy the markup from `dist/blog.html` and paste it somewhere within the `<body>` section of your blog site's home page (likely `index.html`).
+
+5. Copy the markup from `dist/head.html` and paste it into the `<head>` section of your blog site's home page.
+
+6. Copy the markup from `dist/foot.html` and paste it immediately before the closing `</body>` tag within your blog site's home page.
