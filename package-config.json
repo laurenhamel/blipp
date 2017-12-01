@@ -1,9 +1,14 @@
 {
-  "stylesheets": [
-    "style.css",
-    "dependencies/codemirror.css"
+  "css": [
+    "style.css"
   ],
-  "scripts": [
+  "js": [
     "blog.js"
-  ]
+  ],
+  "dependencies": {
+    "js": "<%= pkg.dependencies %>",
+    "css": [
+      "codemirror"
+    ]
+  }
 }

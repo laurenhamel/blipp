@@ -34,9 +34,9 @@
   
   <div class="posts">
     
-    <snippet v-for="post in posts" 
+    <snippet v-for="(post, index) in posts" 
            :post="post" 
-           :key="post"></snippet>
+           :key="index"></snippet>
   
     <loading :loading="loading"></loading>
   

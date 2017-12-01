@@ -1,30 +1,34 @@
 module.exports = function(grunt){
   
-  grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    pkgconfig: grunt.file.readJSON('package-config.json'),
+  var pkg = require('./package.json'),
+      config = require('./package-config.json');
+  
+  grunt.config.set('pkg', pkg);
+  grunt.config.set('config', grunt.config.process(config));
+
+  grunt.config.merge({
     watch: {
       options: { livereload: true },
       startup: {
         files: [],
-        tasks: ['startup'],
+        tasks: ['clean:demo', 'startup'],
         options: { atBegin: true },
       },
       sass: {
         files: ['src/scss/**/*.scss'],
-        tasks: ['sass:dev', 'postcss']
+        tasks: ['sass:dev', 'postcss:dev']
       },
       js: {
         files: ['src/js/**/*.js'],
-        tasks: ['jshint:js', 'babel']
+        tasks: ['jshint:dev', 'babel:dev']
       },
       php: {
         files: ['src/php/**/*.php', 'router.json'],
-        tasks: ['copy:php']
+        tasks: ['copy:dev:php']
       },
       html: {
         files: ['src/**/*.html'],
-        tasks: ['includes', 'replace:dev']
+        tasks: ['includes:dev', 'rename:dev', 'replace:dev']
       },
       config: {
         files: [
@@ -40,16 +44,16 @@ module.exports = function(grunt){
       },
       assets: {
         files: ['src/images/**/*', 'src/fonts/**/*'],
-        tasks: ['copy:assets']
+        tasks: ['copy:dev-assets']
       },
       test: {
         files: ['test/**/*', 'test/.htaccess'],
-        tasks: ['includes', 'replace:dev', 'copy:test']
+        tasks: ['includes:dev', 'rename:dev', 'replace:dev', 'copy:dev-test']
       }
     },
     babel: {
       options: {},
-      js: {
+      dev: {
         files: [
           {
             expand: true,
@@ -57,6 +61,11 @@ module.exports = function(grunt){
             src: ['**/*.js'],
             dest: 'demo/js/'
           }
+        ]
+      },
+      dist: {
+        files: [
+          {expand: true, cwd: 'src/js/', src:['**/*.js'], dest: 'dist/js/'}
         ]
       }
     },
@@ -70,7 +79,7 @@ module.exports = function(grunt){
       dist: {
         options: { style: 'compressed', noCache: true, sourcemap: 'none' },
         files: [
-          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'demo/css/', ext: '.css' }
+          { expand: true, cwd: 'src/scss/', src: ['*.scss'], dest: 'dist/css/', ext: '.css' }
         ]
       }
     },
@@ -78,20 +87,23 @@ module.exports = function(grunt){
       options: { 
         processors: [ require('autoprefixer')({ browsers: ['last 2 versions'] }) ]
       },
-      dist: {
+      dev: {
         src: ['demo/css/**/*.css']
+      },
+      dist: {
+        src: ['dist/css/**/*.css']
       }
     },
     cssmin: {
-      css: {
+      dist: {
         files: [
-        { 
-          expand: true, 
-          src: ['demo/css/**/*.css', '!demo/css/**/*.min.css'], 
-          dest: '.',
-          ext: '.min.css'
-        }
-      ]
+          { 
+            expand: true, 
+            src: ['dist/css/**/*.css', '!dist/css/**/*.min.css'], 
+            dest: '.',
+            ext: '.min.css'
+          }
+        ]
       }
     },
     jshint: {
@@ -99,20 +111,20 @@ module.exports = function(grunt){
         jshintrc: '.jshintrc'
       },
       config: ['Gruntfile.js'],
-      js: ['src/js/**/*.js']
+      dev: ['src/js/**/*.js']
     },
     uglify: {
-      js: {
+      dist: {
         files: [
           { 
             expand: true, 
             cwd: '.', 
             src: [
-              'demo/js/**/*.js', 
-              '!demo/js/**/*.min.js',
-              '!demo/js/**/moment.js',
-              '!demo/js/**/vue.js',
-              '!demo/js/dependencies/codemirror/*.js',
+              'dist/js/**/*.js', 
+              '!dist/js/**/*.min.js',
+              '!dist/js/**/moment.js',
+              '!dist/js/**/vue.js',
+              '!dist/js/dependencies/codemirror/*.js',
             ],
             dest: '.', 
             ext: '.min.js' 
@@ -127,50 +139,76 @@ module.exports = function(grunt){
             { 
               match: 'css', 
               replacement: function(){
-                
-                var css = [], regex = /(\.min)?\.css/g, ext = '.css';
-          
-                grunt.config.get('pkgconfig').stylesheets.forEach(function(s){
-                  
-                  css.push(
-                    '<link rel="stylesheet" href="css/'+s.replace(regex, '')+ext+'">'
-                  );
-                  
+    
+                var target = 'css',
+                    template = '<link rel="stylesheet" href=":link">',
+                    replacement = [], 
+                    regex = new RegExp( '(\\.min)?\\.' + target, 'g' ), 
+                    ext = '.' + target,
+                    route = target + '/';
+
+                grunt.config.get('config')[target].forEach(function(file){
+                  replacement.push( template.replace(':link', route + file.replace(regex, '') + ext) );
                 });
-                
-                return css.join("\n");
+
+                return replacement.join("\n");
                 
               }
             },
             { 
               match: 'js', 
               replacement: function(){
-                
-                var js = [], regex = /(\.min)?\.js/g, ext = '.js';
-                
-                grunt.config.get('pkgconfig').scripts.forEach(function(s){
-                  
-                  js.push('<script src="js/'+s.replace(regex, '')+ext+'"></script>');
-                  
+    
+                var target = 'js',
+                    template = '<script src=":link"></script>',
+                    replacement = [], 
+                    regex = new RegExp( '(\\.min)?\\.' + target, 'g' ), 
+                    ext = '.' + target,
+                    route = target + '/';
+
+                grunt.config.get('config')[target].forEach(function(file){
+                  replacement.push( template.replace(':link', route + file.replace(regex, '') + ext) );
                 });
-                
-                return js.join("\n");
+
+                return replacement.join("\n");
                 
               }
             },
             { 
-              match: 'dependencies', 
+              match: 'dependencies:css', 
               replacement: function(){
-                
-                var dep = [], regex = /(\.min)?\.js/g, ext = '.min.js';
-                
-                Object.keys(grunt.config.get('pkg').dependencies).forEach(function(d){
-                  
-                  dep.push('<script src="js/dependencies/'+d.replace(regex, '')+ext+'"></script>');
-                  
+    
+                var target = 'css',
+                    template = '<link rel="stylesheet" href=":link">',
+                    replacement = [], 
+                    regex = new RegExp( '(\\.min)?\\.' + target, 'g' ), 
+                    ext = '.' + target,
+                    route = target + '/dependencies/';
+
+                grunt.config.get('config').dependencies[target].forEach(function(file){
+                  replacement.push( template.replace(':link', route + file.replace(regex, '') + ext) );
                 });
-                
-                return dep.join("\n");
+
+                return replacement.join("\n");
+              
+              }
+            },
+            { 
+              match: 'dependencies:js', 
+              replacement: function(){
+    
+                var target = 'js',
+                    template = '<script src=":link"></script>',
+                    replacement = [], 
+                    regex = new RegExp( '(\\.min)?\\.' + target, 'g' ), 
+                    ext = '.' + target,
+                    route = target + '/dependencies/';
+
+                Object.keys(grunt.config.get('config').dependencies[target]).forEach(function(file){
+                  replacement.push( template.replace(':link', route + file.replace(regex, '') + ext) );
+                });
+
+                return replacement.join("\n");
                 
               }
             },
@@ -191,50 +229,76 @@ module.exports = function(grunt){
             { 
               match: 'css', 
               replacement: function(){
-                
-                var css = [], regex = /(\.min)?\.css/g, ext = '.min.css';
-                
-                grunt.config.get('pkgconfig').stylesheets.forEach(function(s){
-                  
-                  css.push(
-                    '<link rel="stylesheet" href="css/'+s.replace(regex, '')+ext+'">'
-                  );
-                  
+    
+                var target = 'css',
+                    template = '<link rel="stylesheet" href=":link">',
+                    replacement = [], 
+                    regex = new RegExp( '(\\.min)?\\.' + target, 'g' ), 
+                    ext = '.min.' + target,
+                    route = target + '/';
+
+                grunt.config.get('config')[target].forEach(function(file){
+                  replacement.push( template.replace(':link', route + file.replace(regex, '') + ext) );
                 });
-                
-                return css.join("\n");
+
+                return replacement.join("\n");
                 
               }
             },
             { 
               match: 'js', 
               replacement: function(){
-                
-                var js = [], regex = /(\.min)?\.js/g, ext = '.min.js';
-                
-                grunt.config.get('pkgconfig').scripts.forEach(function(s){
-                  
-                  js.push('<script src="js/'+s.replace(regex, '')+ext+'"></script>');
-                  
+    
+                var target = 'js',
+                    template = '<script src=":link"></script>',
+                    replacement = [], 
+                    regex = new RegExp( '(\\.min)?\\.' + target, 'g' ), 
+                    ext = '.min.' + target,
+                    route = target + '/';
+
+                grunt.config.get('config')[target].forEach(function(file){
+                  replacement.push( template.replace(':link', route + file.replace(regex, '') + ext) );
                 });
-                
-                return js.join("\n");
+
+                return replacement.join("\n");
                 
               }
             },
             { 
-              match: 'dependencies', 
+              match: 'dependencies:css', 
               replacement: function(){
-                
-                var dep = [], regex = /(\.min)?\.js/g, ext = '.min.js';
-                
-                Object.keys(grunt.config.get('pkg').dependencies).forEach(function(d){
-                  
-                  dep.push('<script src="js/dependencies/'+d.replace(regex, '')+ext+'"></script>');
-                  
+    
+                var target = 'css',
+                    template = '<link rel="stylesheet" href=":link">',
+                    replacement = [], 
+                    regex = new RegExp( '(\\.min)?\\.' + target, 'g' ), 
+                    ext = '.min.' + target,
+                    route = target + '/dependencies/';
+
+                grunt.config.get('config').dependencies[target].forEach(function(file){
+                  replacement.push( template.replace(':link', route + file.replace(regex, '') + ext) );
                 });
-                
-                return dep.join("\n");
+
+                return replacement.join("\n");
+              
+              }
+            },
+            { 
+              match: 'dependencies:js', 
+              replacement: function(){
+    
+                var target = 'js',
+                    template = '<script src=":link"></script>',
+                    replacement = [], 
+                    regex = new RegExp( '(\\.min)?\\.' + target, 'g' ), 
+                    ext = '.min.' + target,
+                    route = target + '/dependencies/';
+
+                Object.keys(grunt.config.get('config').dependencies[target]).forEach(function(file){
+                  replacement.push( template.replace(':link', route + file.replace(regex, '') + ext) );
+                });
+
+                return replacement.join("\n");
                 
               }
             },
@@ -251,84 +315,118 @@ module.exports = function(grunt){
       },
     },
     copydeps: {
-      dependencies: {
+      dev: {
         options: {
           unminified: true,
-          minified: true
+          minified: false,
+          css: true,
+          include: {
+            js: {
+              'codemirror/mode/**/*.js': 'codemirror/'
+            }
+          }
         },
         pkg: 'package.json',
-        dest: 'demo/js/dependencies/'
+        dest: {
+          js: 'demo/js/dependencies/',
+          css: 'demo/css/dependencies/'
+        }
+      },
+      dist: {
+        options: {
+          unminified: true,
+          minified: true,
+          css: true,
+          include: {
+            js: {
+              'codemirror/mode/**/*.js': 'codemirror/'
+            }
+          }
+        },
+        pkg: 'package.json',
+        dest: {
+          js: 'dist/js/dependencies/',
+          css: 'dist/css/dependencies/'
+        }
       }
     },
     includes: {
-      html: {
+      dev: {
         options: { 
           includePath: 'src/includes/',
         },
         cwd: 'src/',
-        src: ['*.html'], 
-        dest: 'demo/'
+        src: ['blog.html'], 
+        dest: 'demo/',
       },
-      integrate: {
+      dist: {
         options: {
           includePath: 'src/includes/',
         },
-        src: ['src/includes/blog.html', 'src/includes/foot.html', 'src/includes/head.html'],
+        src: ['src/blog.html', 'src/includes/meta/foot.html', 'src/includes/meta/head.html'],
         dest: 'dist/',
         flatten: true
       }
     },
     copy: {
-      test: {
+      'dev-test': {
         files: [
           { expand: true, cwd: 'test/', src: ['**/*'], dest: 'demo/', dot: true }
         ]
       },
-      php: {
+      'dev-php': {
         files: [
           { expand: true, cwd: 'src/php', src: ['**/*.php'], dest: 'demo/php' }
         ]
       },
-      assets: {
+      'dev-assets': {
         files: [
           { expand: true, cwd: 'src/images/', src: ['**'], dest: 'demo/images' },
           { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'demo/fonts' }
         ]
       },
-      dependencies: {
+      'dist-test': {
         files: [
           { 
             expand: true, 
-            cwd: 'node_modules/codemirror/lib/', 
-            src: ['codemirror.css'], 
-            dest: 'demo/css/dependencies' 
-          },
-          { 
-            expand: true, 
-            flatten: true,
-            cwd: 'node_modules/codemirror/mode/', 
-            src: ['**/*.js'], 
-            dest: 'demo/js/dependencies/codemirror/' 
-          },
+            cwd: 'test/', 
+            src: ['**/*', '!**/authors/**', '!**/drafts/**', '!**/posts/**', '!**/images/**'], 
+            dest: 'dist/', 
+            dot: true 
+          }
         ]
       },
-      dist: {
+      'dist-php': {
         files: [
-          { expand: true, cwd: 'demo/', src: ['**/*', '!index.html'], dest: 'dist' }
+          { expand: true, cwd: 'src/php', src: ['**/*.php'], dest: 'dist/php' }
         ]
-      }
+      },
+      'dist-assets': {
+        files: [
+          { expand: true, cwd: 'src/images/', src: ['**'], dest: 'dist/images' },
+          { expand: true, cwd: 'src/fonts/', src: ['**'], dest: 'dist/fonts' }
+        ]
+      },
     },
     clean: {
-      all: ['demo/', 'dist/'],
+      demo: ['demo/'],
+      dist: ['dist/'],
       unminjs: [
-        'demo/js/**/*.js', 
-        '!demo/js/**/*.min.js', 
-        '!demo/js/dependencies/codemirror/*.js'
+        'dist/js/**/*.js', 
+        '!dist/js/**/*.min.js', 
+        '!dist/js/dependencies/codemirror/*.js'
       ],
       unmincss: [
-        'demo/css/**/*.css', 
-        '!demo/css/**/*.min.css'
+        'dist/css/**/*.css', 
+        '!dist/css/**/*.min.css'
       ]
+    },
+    rename: {
+      dev: {
+        files: [
+          {src: 'demo/blog.html', dest: 'demo/index.html'}
+        ]
+      }
     }
   });
   
@@ -344,36 +442,42 @@ module.exports = function(grunt){
   grunt.loadNpmTasks('grunt-postcss');
   grunt.loadNpmTasks('grunt-includes');
   grunt.loadNpmTasks('grunt-babel');
+  grunt.loadNpmTasks('grunt-rename-util');
 
+  grunt.registerTask('copy:dev', [
+    'copy:dev-test',
+    'copy:dev-php',
+    'copy:dev-assets',
+  ]);
+  grunt.registerTask('copy:dist', [
+    'copy:dist-test',
+    'copy:dist-php',
+    'copy:dist-assets',
+  ]);
   grunt.registerTask('default', ['dev']);
   grunt.registerTask('startup', [
-    'copydeps',
+    'clean:dist',
+    'copydeps:dev',
     'sass:dev',
-    'postcss',
+    'postcss:dev',
     'jshint',
-    'babel',
-    'uglify',
-    'copy:test',
-    'copy:php',
-    'copy:assets',
-    'copy:dependencies',
-    'includes',
+    'babel:dev',
+    'copy:dev',
+    'includes:dev',
+    'rename:dev',
     'replace:dev'
   ]);
   grunt.registerTask('dev', ['watch']);
   grunt.registerTask('dist', [
-    'clean:all',
-    'copydeps',
+    'clean:dist',
+    'copydeps:dist',
     'sass:dist',
-    'postcss',
-    'copy:test',
-    'copy:php',
-    'copy:assets',
-    'copy:dependencies',
-    'cssmin',
-    'babel',
-    'uglify',
-    'includes',
+    'postcss:dist',
+    'copy:dist',
+    'cssmin:dist',
+    'babel:dist',
+    'uglify:dist',
+    'includes:dist',
     'replace:dist',
     'clean:unminjs',
     'clean:unmincss',
