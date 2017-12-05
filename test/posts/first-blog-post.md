@@ -6,7 +6,7 @@ author: Lauren Hamel
 created: 11/06/2017 12:00PM
 modified: 11/07/2017 1:00AM
 category: Web Development
-tags: [blog, web design, web development, markdown]
+tags: blog, web design, web development, markdown
 ---
 
 Varias commodo efflorescere, ita possumus tractavissent. Quo dolore quis quis 

@@ -46,7 +46,7 @@ class Meta {
     
     // Handle strings only
     if( gettype($string) !== 'string' ) return $string;
-
+    
     // Array types
     if( preg_match('/^\[(.+?)\]$/', $string) ) {
 
@@ -58,6 +58,13 @@ class Meta {
 
       }
 
+    }
+    
+    // Lists
+    elseif( preg_match('/^.+?([,;|])(?: *.+?\1)+( *.+)$/', $string, $match) ) {
+      
+      $string = array_map('trim', explode($match[1], $match[0]));
+      
     }
     
     // Object types
