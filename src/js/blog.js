@@ -196,7 +196,7 @@ const filters = {
     
   },
   
-  date( value, format = 'MMMM d, YYYY' ) {
+  date( value, format = BLOG_META.date.long ) {
     
     if( !value ) return null;
     
@@ -433,13 +433,7 @@ let Post = Vue.component('post', {
         markdown: null,
         path: null
       },
-      share: [
-        'email',
-        'linkedin',
-        'facebook',
-        'twitter',
-        'google'
-      ]
+      share: BLOG_META.share
     };
   },
   
@@ -698,6 +692,7 @@ let Author = Vue.component('author', {
   
   data() {
     return {
+      location: location,
       photo: null,
       about: {
         config: {},
@@ -721,9 +716,11 @@ let Author = Vue.component('author', {
     
     loadMore,
     
-    getFbProfileImage() {
+    getImageURL() {
       
       var self = this, id;
+      
+      console.log(self);
       
       if( !self.about.meta.facebook ) return;
       

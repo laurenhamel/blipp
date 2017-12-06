@@ -3,7 +3,7 @@
   <div class="about">
     
     <div class="portrait">
-      <img class="image" :src="getFbProfileImage()">
+      <img class="image" :src="getImageURL()">
     </div>
   
     <h1 class="name">{{about.meta.name}}</h1>
@@ -25,6 +25,10 @@
         <a :class="'soci-' + social"
            :href="socialURL(social, about.meta[social])"
            :target="social == 'skype' ? '' : '_blank'"></a>
+      </li>
+      <li>
+        <a class="fa-link copy" 
+           :data-clipboard-text="location.href"></a>
       </li>
     </ul>
     
