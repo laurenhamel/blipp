@@ -3,9 +3,10 @@ name: Cydney Goodwin
 title: Blipp Advocate
 email: cydney.goodwin@example.com
 website: //example.com
+headshot: //graph.facebook.com/v2.11/858265243/picture?width=300
 
 linkedin: { link: true, username: cydneygoodwin }
-facebook: { link: false, id: 858265243, username: cydney.goodwin }
+facebook: { link: false, username: cydney.goodwin }
 
 ---
 

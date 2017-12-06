@@ -168,22 +168,6 @@ class API {
   }
   
 }
-class Facebook {
-  
-  constructor( options ) {
-    this.params = $.extend({}, options);
-    this.src = '//graph.facebook.com';
-    this.version = 'v2.11';
-  }
-  
-  // User
-  getUserProfileImage( id ) {
-    
-    return this.src + '/' + this.version + '/' + id + '/picture/?' + $.param(this.params);
-    
-  }
-  
-}
 
 // Globals
 const filters = {
@@ -714,28 +698,7 @@ let Author = Vue.component('author', {
   
   methods: $.extend({
     
-    loadMore,
-    
-    getImageURL() {
-      
-      var self = this, id;
-      
-      console.log(self);
-      
-      if( !self.about.meta.facebook ) return;
-      
-      if( (id = self.about.meta.facebook.id) ) {
-        
-        var api = new Facebook({
-          width: 300
-        });
-        
-        // Get profile image.
-        return api.getUserProfileImage( id );
-        
-      }
-      
-    }
+    loadMore
     
   }, methods),
   

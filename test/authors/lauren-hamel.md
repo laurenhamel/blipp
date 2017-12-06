@@ -3,9 +3,10 @@ name: Lauren Hamel
 title: Web Developer & Blipp Creator
 email: lauren.hamel@outlook.com
 website: //laurenhamel.me
+headshot: //graph.facebook.com/v2.11/641861312/picture?width=300
 
 linkedin: { link: true, username: laurenhamel }
-facebook: { link: false, id: 641861312, username: lauren.hamel }
+facebook: { link: false, username: lauren.hamel }
 instagram: { link: false, username: lhamel3 }
 twitter: { link: true, username: lhamel3 }
 github: { link: true, username: laurenhamel }
