@@ -1,6 +1,7 @@
 <?php
 
 require 'Moment/Moment.php';
+require 'Moment/CustomFormats/MomentJs.php';
 
 class Moment extends Moment\Moment_Engine {
     

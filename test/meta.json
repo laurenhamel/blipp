@@ -6,5 +6,16 @@
   ],
   "contributors": [
     "Cydney Goodwin"
+  ],
+  "date": {
+    "long": "MMMM D, YYYY",
+    "short": "MM.DD.YYYY"
+  },
+  "share": [
+    "email",
+    "linkedin",
+    "facebook",
+    "twitter",
+    "google"
   ]
 }

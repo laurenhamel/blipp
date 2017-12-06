@@ -60,13 +60,6 @@ class Meta {
 
     }
     
-    // Lists
-    elseif( preg_match('/^.+?([,;|])(?: *.+?\1)+( *.+)$/', $string, $match) ) {
-      
-      $string = array_map('trim', explode($match[1], $match[0]));
-      
-    }
-    
     // Object types
     elseif( preg_match('/^\{ *(.+?) *\}$/', $string) ) {
 
@@ -83,6 +76,13 @@ class Meta {
         unset($string[$index]);
         
       }
+      
+    }
+    
+    // Lists
+    elseif( preg_match('/^.+?([,;|])(?: *.+?\1)+( *.+)$/', $string, $match) ) {
+      
+      $string = array_map('trim', explode($match[1], $match[0]));
       
     }
     
