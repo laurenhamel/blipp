@@ -36,20 +36,9 @@ trait EXTENSIBLE {
   
 }
 
-trait CONFIGURABLE {
-  
-  public $config = [
-    'date' => [
-      'long'        => 'F j, Y',
-      'short'       => 'm.d.Y',
-    ]
-  ];
-  
-}
-
 class Markdown {
   
-  use CONFIGURABLE, EXTENSIBLE;
+  use EXTENSIBLE;
   
   public $path;
   public $filename;
@@ -59,6 +48,7 @@ class Markdown {
   public $frontmatter;
   public $markdown;
   public $html;
+  public $config;
   
   function __construct( $path ) {
 
@@ -66,22 +56,23 @@ class Markdown {
     $this->filename = basename($this->path);
     $this->id = filename_id( $this->filename );
     $this->contents = file_get_contents($this->path);
+    $this->config = json_decode(API_META, true);
     $this->registerExtensions();
     $this->parseMeta();
     $this->parseMarkdown();
     
   }
   
-  private function getDatesFromMeta( $meta ) {
+  private function getDatesFromMeta( $meta ) { 
     
     $dates = [];
     
-    foreach($meta as $key => $value) {
+    foreach($meta->getMeta() as $key => $value) {
       
       if( $value instanceof Moment ) $dates[$key] = $value;
       
     }
-    
+
     return $dates;
     
   }
@@ -90,7 +81,7 @@ class Markdown {
     return function() use ( $date, $format ) {
       
       if( !$date ) return;
-      else return $date->format($format);
+      else return $date->format($format, new Moment\CustomFormats\MomentJs());
         
     };
   }
